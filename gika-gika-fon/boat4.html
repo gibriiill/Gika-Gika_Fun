@@ -1,20 +1,517 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="ml">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Boat 4 — Coral Row</title>
-<meta name="description" content="The current slows here, curling around reefs older than the harbor itself.">
-<link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ഇതിനു പിന്നിൽ വലിയ ഒരു കഥയുണ്ട്!</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Malayalam:wght@400;500;600&family=Noto+Sans+Malayalam:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#171512;
+    --ink-2:#231f1a;
+    --coat:#2c2822;
+    --coat-2:#3a352c;
+    --foil:#cdae6a;
+    --foil-dim:#8f7a4d;
+    --paper:#f2e6c9;
+    --paper-2:#e9d9ab;
+    --paper-ink:#2c2013;
+    --paper-ink-soft:#5a4a30;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--ink);
+    background-image:
+      radial-gradient(ellipse at 20% -10%, rgba(205,174,106,0.10), transparent 55%),
+      radial-gradient(ellipse at 100% 20%, rgba(205,174,106,0.06), transparent 45%);
+    color:var(--paper);
+    font-family:'Noto Sans Malayalam', sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  header.topbar{
+    position:sticky;
+    top:0;
+    z-index:40;
+    display:flex;
+    align-items:flex-end;
+    justify-content:space-between;
+    gap:16px;
+    padding:22px 24px 16px;
+    background:linear-gradient(180deg, var(--ink) 72%, rgba(23,21,18,0));
+    border-bottom:1px solid rgba(205,174,106,0.18);
+  }
+  .brand h1{
+    margin:0;
+    font-family:'Noto Sans Malayalam', sans-serif;
+    font-weight:800;
+    font-size:clamp(20px, 4.4vw, 32px);
+    line-height:1.28;
+    letter-spacing:0.2px;
+    color:var(--paper);
+  }
+  .brand p{
+    margin:8px 0 0;
+    font-size:clamp(12.5px, 2.6vw, 14.5px);
+    color:var(--foil);
+    font-weight:500;
+  }
+  .retry-btn{
+    flex:0 0 auto;
+    background:var(--foil);
+    color:var(--ink);
+    border:none;
+    border-radius:3px;
+    padding:11px 18px;
+    font-family:'Noto Sans Malayalam', sans-serif;
+    font-weight:700;
+    font-size:14px;
+    cursor:pointer;
+    box-shadow:0 2px 0 var(--foil-dim);
+    transform:translateY(0);
+    transition:transform .12s ease, box-shadow .12s ease;
+  }
+  .retry-btn:hover{ transform:translateY(-1px); box-shadow:0 3px 0 var(--foil-dim); }
+  .retry-btn:active{ transform:translateY(1px); box-shadow:0 1px 0 var(--foil-dim); }
+
+  main.stage-wrap{
+    max-width:760px;
+    margin:0 auto;
+    padding:20px 20px 90px;
+  }
+
+  .ticket-frame{
+    border:1px solid rgba(205,174,106,0.35);
+    border-radius:4px;
+    padding:10px;
+    background:linear-gradient(180deg, var(--ink-2), var(--ink));
+  }
+
+  .stage{
+    position:relative;
+    width:100%;
+    background:var(--paper);
+    border-radius:2px;
+    overflow:hidden;
+  }
+
+  .story{
+    position:relative;
+    z-index:1;
+    color:var(--paper-ink);
+    font-family:'Noto Serif Malayalam', serif;
+    padding:38px 26px 60px;
+  }
+  .story h2{
+    font-family:'Noto Sans Malayalam', sans-serif;
+    font-weight:800;
+    font-size:18px;
+    color:var(--paper-ink);
+    margin:34px 0 10px;
+    padding-bottom:8px;
+    border-bottom:2px solid var(--paper-ink);
+    display:inline-block;
+  }
+  .story h2:first-of-type{ margin-top:0; }
+  .story p{
+    font-size:16.5px;
+    line-height:1.95;
+    max-width:62ch;
+    margin:0 0 16px;
+    color:var(--paper-ink);
+  }
+  .story .end{
+    margin-top:36px;
+    padding-top:18px;
+    border-top:1px dashed var(--paper-ink-soft);
+    font-family:'Noto Sans Malayalam', sans-serif;
+    font-weight:700;
+    font-size:14.5px;
+    color:var(--paper-ink-soft);
+  }
+
+  canvas#cover{
+    position:absolute;
+    top:0;
+    left:0;
+    z-index:2;
+    display:block;
+    touch-action:pan-y;
+    cursor:grab;
+  }
+  canvas#cover:active{ cursor:grabbing; }
+
+  .hint{
+    position:absolute;
+    z-index:3;
+    left:50%;
+    bottom:26px;
+    transform:translateX(-50%);
+    display:flex;
+    align-items:center;
+    gap:8px;
+    padding:8px 14px;
+    border-radius:999px;
+    background:rgba(23,21,18,0.55);
+    border:1px solid rgba(205,174,106,0.5);
+    color:var(--foil);
+    font-size:12.5px;
+    font-weight:700;
+    white-space:nowrap;
+    pointer-events:none;
+    animation:hintPulse 1.9s ease-in-out infinite;
+  }
+  .hint svg{ width:16px; height:16px; }
+  @keyframes hintPulse{
+    0%,100%{ opacity:0.55; transform:translateX(-50%) translateY(0); }
+    50%{ opacity:1; transform:translateX(-50%) translateY(-4px); }
+  }
+  .hint.hidden{ display:none; }
+
+  footer{
+    max-width:760px;
+    margin:0 auto;
+    padding:0 24px 40px;
+    color:var(--foil-dim);
+    font-size:12.5px;
+    text-align:center;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .hint{ animation:none; }
+    .retry-btn{ transition:none; }
+  }
+</style>
 </head>
-<body class="page-boat" style="background: linear-gradient(160deg, #2c8478 0%, #175c56 100%);">
+<body>
 
-<section class="boat-hero">
-  <img class="big-head" src="head2.png" alt="Rower of boat 4">
-  <h1>Boat 4: Coral Row</h1>
-  <p>The current slows here, curling around reefs older than the harbor itself.</p>
-  <a class="back-link" href="index.html">&larr; Back to the harbor</a>
-</section>
+<header class="topbar">
+  <div class="brand">
+    <h1>ഇതിനു പിന്നിൽ<br>വലിയ ഒരു കഥയുണ്ട്!</h1>
+    <p>വിരൽ കൊണ്ട് ഉരസി മറഞ്ഞിരിക്കുന്ന കഥ വെളിച്ചത്ത് കൊണ്ടുവരൂ</p>
+  </div>
+  <button class="retry-btn" id="retryBtn" type="button">പുതിയ ശ്രമം</button>
+</header>
 
+<main class="stage-wrap">
+  <div class="ticket-frame">
+    <div class="stage" id="stage">
+      <article class="story" id="story">
+
+        <h2>1 · ഒരു സാധാരണ കാഴ്ച</h2>
+        <p>നിങ്ങൾ ദിവസവും കടന്നുപോകുന്ന വഴിയിൽ ഇത് എപ്പോഴും ഉണ്ടായിരുന്നു. ആരും ശ്രദ്ധിക്കാതെ, ഒരു മൂലയിൽ, വെയിലും മഴയും ഏറ്റുവാങ്ങി. കണ്ണിൽപ്പെട്ടാൽ ഒരു നിമിഷം നോക്കും, പിന്നെ മറന്നുപോകും. പക്ഷേ ഇതിന് ഒരു പേരുണ്ട്, ഒരു തുടക്കമുണ്ട്, ഒരു കൈകൊണ്ട് ആദ്യമായി തൊട്ട ദിവസമുണ്ട്. ആ ദിവസത്തിൽ നിന്നാണ് ഈ കഥ തുടങ്ങുന്നത്.</p>
+        <p>ഓരോ വസ്തുവിനും ഒരു ജനനമുണ്ട് എന്ന് നമ്മൾ മറന്നുപോകാറുണ്ട്. അത് ഉണ്ടാക്കിയ കൈകളുടെ ക്ഷീണം, അത് ആദ്യമായി ഉപയോഗിച്ചയാളുടെ സന്തോഷം, അതിനു ചുറ്റും നടന്ന നിസ്സാരമെന്നു തോന്നിയ നിമിഷങ്ങൾ എല്ലാം അതിനുള്ളിൽ അടിഞ്ഞുകൂടിക്കിടക്കുന്നു, ആരെങ്കിലും ഉരസി നോക്കുന്നത് വരെ.</p>
+
+        <h2>2 · ആദ്യത്തെ ഓർമ്മ</h2>
+        <p>ഒരു കൈ ഇതിനെ ആദ്യമായി സ്വന്തമാക്കിയപ്പോൾ, ആ കൈയിൽ ഒരു പ്രതീക്ഷയുണ്ടായിരുന്നു. ചിലർക്ക് അത് ഒരു പുതിയ തുടക്കമായിരുന്നു, ചിലർക്ക് ഒരു സമ്മാനം, മറ്റു ചിലർക്ക് വർഷങ്ങളായി കാത്തിരുന്ന ഒരു സ്വപ്നം. ആ ആദ്യ ദിവസത്തെ ഗന്ധം, ആ വെളിച്ചം, ആ ശബ്ദം എല്ലാം ഇന്നും എവിടെയോ പതിഞ്ഞുകിടപ്പുണ്ട്.</p>
+        <p>കുട്ടികൾ ചുറ്റും ഓടിക്കളിച്ചു. മുതിർന്നവർ അഭിമാനത്തോടെ നോക്കിനിന്നു. ആരോ ഒരു ഫോട്ടോ എടുത്തു, ആ ഫോട്ടോ പിന്നീട് ഒരു ചുമരിൽ പതിറ്റാണ്ടുകളോളം തൂങ്ങിക്കിടന്നു. ഇന്ന് ആ ഫോട്ടോ എവിടെയാണെന്ന് ആർക്കും അറിയില്ല, പക്ഷേ ആ നിമിഷം ഈ വസ്തുവിനുള്ളിൽ ഇപ്പോഴും ജീവിക്കുന്നു.</p>
+
+        <h2>3 · കൈമാറ്റങ്ങൾ</h2>
+        <p>കാലം കടന്നുപോയപ്പോൾ ഇത് പല കൈകളിലൂടെയും കടന്നുപോയി. ചിലർ ഇതിനെ സ്നേഹത്തോടെ പരിപാലിച്ചു, ദിവസവും തുടച്ചു വൃത്തിയാക്കി. ചിലർ തിരക്കിനിടയിൽ മറന്നു, മൂലയിൽ തള്ളിവെച്ചു. ഓരോ കൈമാറ്റത്തിലും ഇതിനു പുതിയൊരു അധ്യായം ചേർക്കപ്പെട്ടു — ചിലത് സന്തോഷത്തിന്റേത്, ചിലത് നിസ്സഹായതയുടേത്.</p>
+        <p>ഒരിക്കൽ ഇത് ഒരു തർക്കത്തിന്റെ കാരണമായി. രണ്ടുപേർ ഇതിനുവേണ്ടി വാദിച്ചു, ഒടുവിൽ ഒരാൾ വിട്ടുകൊടുത്തു. ആ വിട്ടുകൊടുക്കലിനു പിന്നിൽ ഒരു സൗഹൃദം സൂക്ഷിക്കാനുള്ള ആഗ്രഹമായിരുന്നു എന്ന് ഇന്നും ആരും ഓർക്കുന്നില്ല.</p>
+
+        <h2>4 · മഴയുള്ള ഒരു രാത്രി</h2>
+        <p>ഒരു മഴക്കാലത്ത്, ഇടിമിന്നലിന്റെ വെളിച്ചത്തിൽ, ഒരാൾ ഇതിനെ ചേർത്തുപിടിച്ചു നിന്നു. അന്നു രാത്രി എന്താണ് സംഭവിച്ചതെന്ന് ഇന്ന് ആർക്കും കൃത്യമായി പറയാനാവില്ല. ചിലർ പറയുന്നു അത് ഒരു വേർപാടിന്റെ രാത്രിയായിരുന്നു എന്ന്. മറ്റുചിലർ പറയുന്നു അത് ഒരു രക്ഷപ്പെടലിന്റെ രാത്രിയായിരുന്നു എന്ന്.</p>
+        <p>എന്തായാലും, ആ രാത്രിക്കു ശേഷം ഇതിന് ഒരു പോറൽ വീണു — ചെറുതെങ്കിലും ഇന്നും കാണാവുന്ന ഒരു അടയാളം. ആ അടയാളത്തെ ചൂണ്ടിക്കാട്ടി "ഇതിനു പിന്നിൽ ഒരു കഥയുണ്ട്" എന്ന് ആരോ ഒരിക്കൽ പറഞ്ഞു. അതെ, എപ്പോഴും ഉണ്ട്.</p>
+
+        <h2>5 · നഷ്ടപ്പെട്ട വർഷങ്ങൾ</h2>
+        <p>കുറച്ചു കാലത്തേക്ക് ഇത് ആരും തിരിഞ്ഞുനോക്കാതെ കിടന്നു. പൊടിപടലങ്ങൾ അടിഞ്ഞു, നിറം മങ്ങി, ചിലയിടങ്ങളിൽ തുരുമ്പോ പായലോ പിടിച്ചു. ഒരു കാലത്ത് ആരുടെയോ ഹൃദയത്തിനോട് ചേർന്നു നിന്ന ഇത്, ഇപ്പോൾ വെറുമൊരു നിഴൽ മാത്രമായി മൂലയിൽ അവശേഷിച്ചു.</p>
+        <p>പക്ഷേ മറന്നുപോയി എന്നത് ഇല്ലാതായി എന്നല്ല അർത്ഥം. ചിലത് കാത്തിരിക്കാൻ വേണ്ടി മാത്രം മറഞ്ഞു നിൽക്കും, ശരിയായ ഒരു കണ്ണ് വീണ്ടും അതിനെ കണ്ടെത്തുന്നത് വരെ.</p>
+
+        <h2>6 · തിരിച്ചുവരവ്</h2>
+        <p>പിന്നീട് ഒരു ദിവസം, ആരോ ഒരാൾ ഇതിനെ വീണ്ടും ശ്രദ്ധിച്ചു. ഒരു കൗതുകം കൊണ്ടോ, ഒരു ആവശ്യം കൊണ്ടോ, അല്ലെങ്കിൽ വെറും യാദൃച്ഛികമായോ — ആ കണ്ണ് ഇതിനെ വീണ്ടും ജീവനുള്ളതാക്കി. പൊടി തുടച്ചു, കേടുപാടുകൾ പരിശോധിച്ചു, ഒരു പുതിയ സ്ഥാനം കൊടുത്തു.</p>
+        <p>ഈ രണ്ടാമത്തെ ജീവിതം പലപ്പോഴും ആദ്യത്തേതിനേക്കാൾ വിലപ്പെട്ടതാണ്. കാരണം അത് തിരഞ്ഞെടുക്കപ്പെട്ടതാണ്, കൊടുത്തതല്ല. ആരെയും ബോധ്യപ്പെടുത്തേണ്ട ആവശ്യമില്ലാതെ, സ്വന്തം കാരണത്താൽ വീണ്ടും വേണ്ടപ്പെട്ടതായി മാറി.</p>
+
+        <h2>7 · ഒരു രഹസ്യം</h2>
+        <p>എല്ലാ പഴയ വസ്തുക്കൾക്കും ഒരു രഹസ്യ അറയുണ്ട് — ഒരു വിള്ളൽ, ഒരു അടിഭാഗം, ഒരു കോണ് — അവിടെ ആരും നോക്കാത്ത എന്തെങ്കിലും ഒളിഞ്ഞിരിക്കും. ഈ വസ്തുവിലും അങ്ങനെ ഒന്നുണ്ടായിരുന്നു. ഒരു ചെറിയ കടലാസ് കഷ്ണം, മങ്ങിയ അക്ഷരങ്ങളോടെ, ആരോ എഴുതി മറന്നുപോയത്.</p>
+        <p>ആ അക്ഷരങ്ങൾ പൂർണ്ണമായി വായിക്കാൻ കഴിഞ്ഞില്ല. പക്ഷേ ബാക്കിയുള്ള വാക്കുകൾ ഒരു പേരും, ഒരു തീയതിയും, "ഓർമ്മയ്ക്കായി" എന്ന ഒരു വരിയും വെളിപ്പെടുത്തി. ആ വാക്കുകൾ എഴുതിയ കൈ ഇന്ന് എവിടെയാണെന്ന് ആർക്കും അറിയില്ല. പക്ഷേ ആ ഓർമ്മ ഇപ്പോഴും ഇവിടെയുണ്ട്.</p>
+
+        <h2>8 · കാലത്തിന്റെ അടയാളങ്ങൾ</h2>
+        <p>ഓരോ പോറലും, ഓരോ നിറംമാറ്റവും, ഓരോ ചെറിയ കേടും ഒരു കലണ്ടറാണ്. അത് വർഷങ്ങളെ അളക്കുന്നത് സംഖ്യകൾ കൊണ്ടല്ല, മറിച്ച് അതിലൂടെ കടന്നുപോയ ജീവിതങ്ങൾ കൊണ്ടാണ്. ഒരു വിദഗ്ധന് ഈ അടയാളങ്ങൾ നോക്കി ഇതിന്റെ മുഴുവൻ ചരിത്രവും വായിച്ചെടുക്കാൻ കഴിഞ്ഞേക്കും.</p>
+        <p>പക്ഷേ വിദഗ്ധരില്ലാതെയും, സാധാരണക്കാർക്കും ഈ അടയാളങ്ങൾ ഒരു കാര്യം പറഞ്ഞുതരും — ഇത് വെറും ഒരു വസ്തുവല്ല, ഒരു സാക്ഷിയാണ്. കണ്ട എല്ലാ കാര്യങ്ങളും ഇതിന് ഓർമ്മയുണ്ട്, പറയാൻ ഒരു ഭാഷ ഇല്ലെന്നു മാത്രം.</p>
+
+        <h2>9 · അവസാനത്തെ യാത്ര</h2>
+        <p>ഇന്ന് ഇത് ഇവിടെയാണ് — നിങ്ങളുടെ മുന്നിൽ, ഈ സ്ക്രീനിൽ, ഒരു നിമിഷത്തേക്ക് നിർത്തി. ഇത് അതിന്റെ അവസാനത്തെ യാത്രയല്ല. ഓരോ കൈയും, ഓരോ കണ്ണും ഇതിനെ ഒരു പുതിയ അധ്യായത്തിലേക്ക് കൊണ്ടുപോകുന്നു. നിങ്ങൾ ഇപ്പോൾ ഈ കഥ വായിക്കുന്നു എന്നത് തന്നെ, ഈ വസ്തുവിന്റെ യാത്രയിലെ ഒരു പുതിയ താൾ ആണ്.</p>
+        <p>അടുത്തതായി ഇത് ആരുടെ കൈയിൽ എത്തും, ആരുടെ ഓർമ്മയിൽ ഇടം പിടിക്കും എന്ന് ആർക്കും അറിയില്ല. അതാണ് ഓരോ വസ്തുവിന്റെയും ഏറ്റവും വലിയ രഹസ്യം — അതിന്റെ കഥ ഒരിക്കലും പൂർണ്ണമായി അവസാനിക്കുന്നില്ല.</p>
+
+        <h2>10 · കഥ തുടരുന്നു</h2>
+        <p>ഇപ്പോൾ നിങ്ങൾ ഈ വരികൾ വരെ ഉരസി എത്തിയിരിക്കുന്നു. നിങ്ങളുടെ വിരൽ ഈ വസ്തുവിന്റെ ഉപരിതലത്തിലൂടെ സഞ്ചരിച്ച് ഒരു കഥയെ വെളിച്ചത്ത് കൊണ്ടുവന്നു. ഇത് തന്നെയാണ് ഓർമ്മ പ്രവർത്തിക്കുന്ന രീതി — ആരെങ്കിലും ശ്രമിക്കുമ്പോൾ മാത്രം, മറഞ്ഞിരിക്കുന്നത് വീണ്ടും കാണപ്പെടുന്നു.</p>
+        <p>ഓരോ സാധാരണ വസ്തുവിനും ഇതുപോലെ ഒരു കഥയുണ്ട് എന്ന് ഇനി ഓർക്കുക. നിങ്ങളുടെ വീട്ടിലെ ആ പഴയ കസേരയ്ക്കും, ആ കീറിയ പുസ്തകത്തിനും, ജനലരികിലെ ആ ചെടിച്ചട്ടിക്കും. നോക്കാൻ മറന്നുപോയത് മാത്രമാണ് കുറവ്.</p>
+
+        <p class="end">ഇനിയും കഥകൾ ബാക്കിയാണ്. "പുതിയ ശ്രമം" അമർത്തി വേറൊരു വസ്തുവിനെ ഉരസി നോക്കൂ — അതിനു പിന്നിലും ഒരു വലിയ കഥയുണ്ട്.</p>
+
+      </article>
+      <canvas id="cover"></canvas>
+      <div class="hint" id="hint">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 11V6a2 2 0 0 1 4 0v5"></path><path d="M11 10V4a2 2 0 0 1 4 0v6"></path><path d="M15 9.5V5a2 2 0 0 1 4 0v8"></path><path d="M7 13a2 2 0 0 0-4 0c0 1.5 1 3 1 5a5 5 0 0 0 5 5h4a7 7 0 0 0 7-7v-2"></path></svg>
+        <span>ഇവിടെ ഉരസൂ, കഥ കാണാം</span>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer>ഓരോ ശ്രമത്തിലും ഒരു പുതിയ വസ്തു — അതേ വലിയ കഥ, വീണ്ടും കണ്ടെത്താൻ.</footer>
+
+<script>
+(function(){
+  var stage   = document.getElementById('stage');
+  var story   = document.getElementById('story');
+  var canvas  = document.getElementById('cover');
+  var ctx     = canvas.getContext('2d');
+  var hint    = document.getElementById('hint');
+  var retryBtn= document.getElementById('retryBtn');
+
+  var OBJECTS = [
+    { key:'car',      label:'കാർ' },
+    { key:'rock',     label:'വലിയ പാറ' },
+    { key:'tree',     label:'മരം' },
+    { key:'box',      label:'പെട്ടി' },
+    { key:'mountain', label:'മല' },
+    { key:'house',    label:'വീട്' }
+  ];
+
+  var current = null;
+  var scratched = false;
+  var isDown = false;
+  var lastX = 0, lastY = 0;
+
+  function pickObject(){
+    var idx = Math.floor(Math.random() * OBJECTS.length);
+    if (current && OBJECTS[idx].key === current.key && OBJECTS.length > 1){
+      idx = (idx + 1) % OBJECTS.length;
+    }
+    current = OBJECTS[idx];
+  }
+
+  function sizeCanvas(){
+    var dpr = window.devicePixelRatio || 1;
+    var w = stage.clientWidth;
+    var h = story.scrollHeight;
+    canvas.style.width  = w + 'px';
+    canvas.style.height = h + 'px';
+    canvas.width  = Math.round(w * dpr);
+    canvas.height = Math.round(h * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return { w: w, h: h };
+  }
+
+  function drawIcon(type, cx, cy, size){
+    ctx.save();
+    ctx.translate(cx, cy);
+    ctx.strokeStyle = '#e9d9ab';
+    ctx.fillStyle = '#e9d9ab';
+    ctx.lineWidth = Math.max(2, size * 0.035);
+    ctx.lineJoin = 'round';
+    ctx.lineCap = 'round';
+
+    if (type === 'car'){
+      var w = size, h = size * 0.44;
+      ctx.beginPath();
+      ctx.moveTo(-w/2, h*0.25);
+      ctx.lineTo(-w/2, -h*0.1);
+      ctx.quadraticCurveTo(-w*0.32, -h*0.85, -w*0.08, -h*0.85);
+      ctx.lineTo(w*0.12, -h*0.85);
+      ctx.quadraticCurveTo(w*0.34, -h*0.85, w*0.40, -h*0.1);
+      ctx.lineTo(w/2, h*0.1);
+      ctx.quadraticCurveTo(w/2, h*0.25, w*0.42, h*0.25);
+      ctx.lineTo(-w*0.42, h*0.25);
+      ctx.quadraticCurveTo(-w/2, h*0.25, -w/2, h*0.1);
+      ctx.closePath();
+      ctx.stroke();
+      ctx.beginPath(); ctx.arc(-w*0.28, h*0.30, size*0.10, 0, Math.PI*2); ctx.fill();
+      ctx.beginPath(); ctx.arc(w*0.28, h*0.30, size*0.10, 0, Math.PI*2); ctx.fill();
+    }
+    else if (type === 'rock'){
+      var pts = [[-0.5,0.35],[-0.42,-0.05],[-0.2,-0.4],[0.1,-0.48],[0.38,-0.28],[0.48,0.05],[0.32,0.38],[-0.05,0.42]];
+      ctx.beginPath();
+      pts.forEach(function(p,i){
+        var x = p[0]*size, y = p[1]*size;
+        if (i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+      });
+      ctx.closePath();
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(-0.15*size, -0.15*size);
+      ctx.lineTo(0.05*size, 0.05*size);
+      ctx.lineTo(0.2*size, -0.05*size);
+      ctx.stroke();
+    }
+    else if (type === 'tree'){
+      ctx.beginPath();
+      ctx.moveTo(-size*0.06, size*0.45);
+      ctx.lineTo(-size*0.06, size*0.05);
+      ctx.lineTo(size*0.06, size*0.05);
+      ctx.lineTo(size*0.06, size*0.45);
+      ctx.stroke();
+      [[0,-0.28,0.30],[-0.22,-0.05,0.24],[0.22,-0.05,0.24],[0,0.12,0.20]].forEach(function(c){
+        ctx.beginPath();
+        ctx.arc(c[0]*size, c[1]*size, c[2]*size, 0, Math.PI*2);
+        ctx.stroke();
+      });
+    }
+    else if (type === 'box'){
+      var s = size*0.42, d = size*0.18;
+      ctx.beginPath();
+      ctx.moveTo(-s, -s*0.6); ctx.lineTo(0, -s); ctx.lineTo(s, -s*0.6);
+      ctx.lineTo(s, s*0.6); ctx.lineTo(0, s); ctx.lineTo(-s, s*0.6);
+      ctx.closePath(); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(-s, -s*0.6); ctx.lineTo(0, -s*0.2); ctx.lineTo(s, -s*0.6); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(0, -s*0.2); ctx.lineTo(0, s); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(0,-s*1.05); ctx.lineTo(0, -s*0.2); ctx.stroke();
+    }
+    else if (type === 'mountain'){
+      ctx.beginPath();
+      ctx.moveTo(-size*0.5, size*0.32);
+      ctx.lineTo(-size*0.12, -size*0.42);
+      ctx.lineTo(size*0.16, size*0.05);
+      ctx.lineTo(size*0.5, size*0.32);
+      ctx.closePath(); ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(-size*0.20, -size*0.16);
+      ctx.lineTo(-size*0.12, -size*0.42);
+      ctx.lineTo(-size*0.02, -size*0.20);
+      ctx.stroke();
+    }
+    else if (type === 'house'){
+      var s = size*0.4;
+      ctx.beginPath();
+      ctx.moveTo(-s, s*0.55); ctx.lineTo(-s, -s*0.1);
+      ctx.lineTo(0, -s*0.75); ctx.lineTo(s, -s*0.1);
+      ctx.lineTo(s, s*0.55); ctx.closePath(); ctx.stroke();
+      ctx.strokeRect(-s*0.22, s*0.05, s*0.44, s*0.5);
+      ctx.beginPath(); ctx.arc(-s*0.55, -s*0.35, s*0.12, 0, Math.PI*2); ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  function drawCover(){
+    var dims = sizeCanvas();
+    var w = dims.w, h = dims.h;
+    ctx.clearRect(0, 0, w, h);
+
+    var grad = ctx.createLinearGradient(0, 0, 0, h);
+    grad.addColorStop(0, '#332e26');
+    grad.addColorStop(1, '#221e18');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, w, h);
+
+    ctx.save();
+    ctx.strokeStyle = 'rgba(233,217,171,0.06)';
+    ctx.lineWidth = 1.2;
+    var gap = 26;
+    ctx.beginPath();
+    for (var yy = -h; yy < w + h; yy += gap){
+      ctx.moveTo(yy, 0);
+      ctx.lineTo(yy - h, h);
+    }
+    ctx.stroke();
+    ctx.restore();
+
+    ctx.save();
+    ctx.rotate(-16 * Math.PI / 180);
+    ctx.fillStyle = 'rgba(233,217,171,0.075)';
+    ctx.font = '700 ' + Math.max(20, w*0.075) + 'px "Noto Sans Malayalam", sans-serif';
+    ctx.textAlign = 'center';
+    var label = current.label;
+    var stepY = Math.max(70, w*0.16);
+    var stepX = Math.max(160, w*0.55);
+    for (var gy = -h*0.3; gy < h*1.4; gy += stepY){
+      for (var gx = -w*0.6; gx < w*1.6; gx += stepX){
+        ctx.fillText(label, gx, gy);
+      }
+    }
+    ctx.restore();
+
+    var iconY = Math.min(150, h * 0.16) + 40;
+    var iconSize = Math.min(w * 0.5, 190);
+    drawIcon(current.key, w/2, iconY, iconSize);
+
+    ctx.fillStyle = '#f2e6c9';
+    ctx.font = '800 ' + Math.max(22, w*0.065) + 'px "Noto Sans Malayalam", sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(label, w/2, iconY + iconSize*0.62 + 34);
+
+    ctx.fillStyle = 'rgba(205,174,106,0.85)';
+    ctx.font = '500 ' + Math.max(12.5, w*0.032) + 'px "Noto Sans Malayalam", sans-serif';
+    ctx.fillText('ഇതിനു പിന്നിൽ വലിയ ഒരു കഥയുണ്ട്', w/2, iconY + iconSize*0.62 + 62);
+
+    scratched = false;
+    hint.classList.remove('hidden');
+  }
+
+  function erase(x, y){
+    var dpr = window.devicePixelRatio || 1;
+    var r = ('ontouchstart' in window) ? 46 : 34;
+    ctx.save();
+    ctx.globalCompositeOperation = 'destination-out';
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+    if (!scratched){
+      scratched = true;
+      hint.classList.add('hidden');
+    }
+  }
+
+  function eraseLine(x0, y0, x1, y1){
+    var dist = Math.hypot(x1 - x0, y1 - y0);
+    var steps = Math.max(1, Math.floor(dist / 8));
+    for (var i = 0; i <= steps; i++){
+      var t = i / steps;
+      erase(x0 + (x1 - x0) * t, y0 + (y1 - y0) * t);
+    }
+  }
+
+  function getPos(e){
+    var rect = canvas.getBoundingClientRect();
+    return { x: e.clientX - rect.left, y: e.clientY - rect.top };
+  }
+
+  canvas.addEventListener('pointerdown', function(e){
+    isDown = true;
+    var p = getPos(e);
+    lastX = p.x; lastY = p.y;
+    erase(p.x, p.y);
+  });
+  canvas.addEventListener('pointermove', function(e){
+    if (!isDown) return;
+    var p = getPos(e);
+    eraseLine(lastX, lastY, p.x, p.y);
+    lastX = p.x; lastY = p.y;
+  });
+  window.addEventListener('pointerup', function(){ isDown = false; });
+  canvas.addEventListener('pointerleave', function(){ isDown = false; });
+  canvas.addEventListener('pointercancel', function(){ isDown = false; });
+
+  var resizeTimer;
+  window.addEventListener('resize', function(){
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(drawCover, 250);
+  });
+
+  retryBtn.addEventListener('click', function(){
+    pickObject();
+    drawCover();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  function init(){
+    pickObject();
+    if (document.fonts && document.fonts.ready){
+      document.fonts.ready.then(drawCover);
+    } else {
+      drawCover();
+    }
+    setTimeout(drawCover, 300);
+  }
+
+  init();
+})();
+</script>
 </body>
 </html>
+
