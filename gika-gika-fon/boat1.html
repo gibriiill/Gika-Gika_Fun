@@ -3,387 +3,611 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ഇത്തിരി നേരം ഇരുന്നാൽ എന്താ, മല ഇടിഞ്ഞു വീഴുമോ?</title>
-<meta name="description" content="ഇത്തിരി നേരം ഇരുന്നാൽ എന്താ, മല ഇടിഞ്ഞു വീഴുമോ? — ഇരുന്നു നോക്കൂ, കാണിച്ചു തരാം.">
+<title>കാക്ക കുളിച്ചാൽ കൊക്കാവില്ല</title>
+<meta name="description" content="കാക്കയെ കുളിപ്പിക്കൂ, സോപ്പ് തേക്കൂ, എന്ത് സംഭവിക്കുന്നു എന്ന് നോക്കൂ.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2280%22>🐦‍⬛</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Malayalam:wght@400;500;600;700&family=Baloo+2:wght@500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Malayalam:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root{
-    --sky-top:#241a3d;
-    --sky-mid:#a8456b;
-    --sky-low:#ff9e5e;
-    --sky-horizon:#ffcf8a;
-    --mtn-far:#5c4a72;
-    --mtn-mid:#453860;
-    --mtn-near:#372c50;
-    --rock-a:#4a3b63;
-    --rock-b:#5b4a75;
-    --rock-c:#382b52;
-    --ground:#2e2a3a;
-    --ground-hi:#443a52;
-    --wood:#8a5a34;
-    --wood-dark:#6b4324;
-    --cream:#fff3e2;
-    --cream-dim:#f0dcc4;
-    --ink:#241a3d;
-    --accent:#ffb15e;
+    --sky-top:#0F3A52;
+    --sky-mid:#3D7A8C;
+    --sky-bottom:#F6C978;
+    --tile:#E4EDE9;
+    --tile-grout:#9FB9AE;
+    --floor:#C9AF88;
+    --floor-grout:#8A7248;
+    --crow:#20242B;
+    --crow-belly:#3A3F47;
+    --water:#8FD3EA;
+    --water-deep:#4FA9C7;
+    --ink:#122019;
+    --panel:#FFF7E8;
+    --panel-edge:#E7CFA0;
+    --focus:#FF7A3D;
+    --btn:#0F3A52;
+    --btn-text:#FFF7E8;
+    --btn-soap:#3D8C6B;
+    --btn-reset:#B65C2E;
+    font-size:16px;
   }
+
   *{box-sizing:border-box;}
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important;}
+  }
+
   html,body{
-    margin:0;padding:0;
-    width:100%;height:100%;
-    overflow:hidden;
-    background:var(--sky-top);
-    font-family:'Noto Sans Malayalam','Baloo 2',sans-serif;
-  }
-  #stage{
-    position:relative;
-    width:100vw;height:100vh;
-    min-height:560px;
-  }
-  svg#scene{
-    position:absolute;inset:0;
-    width:100%;height:100%;
-    display:block;
-  }
-
-  .title-wrap{
-    position:absolute;
-    top:clamp(20px,5vh,56px);
-    left:0;right:0;
-    text-align:center;
-    padding:0 20px;
-    pointer-events:none;
-    z-index:5;
-  }
-  h1{
     margin:0;
-    font-weight:700;
-    font-size:clamp(1.15rem,3.4vw,2.15rem);
-    line-height:1.35;
-    color:var(--cream);
-    text-shadow:0 2px 18px rgba(0,0,0,.45);
-    max-width:18ch;
-    margin:0 auto;
-  }
-  .sub{
-    margin-top:10px;
-    font-family:'Baloo 2',sans-serif;
-    font-weight:500;
-    font-size:clamp(.85rem,1.6vw,1.05rem);
-    color:var(--cream-dim);
-    opacity:.85;
-    letter-spacing:.01em;
+    padding:0;
+    min-height:100%;
+    background:
+      radial-gradient(1200px 700px at 50% -10%, var(--sky-mid), transparent 60%),
+      linear-gradient(180deg, var(--sky-top) 0%, var(--sky-mid) 45%, var(--sky-bottom) 100%);
+    background-attachment:fixed;
+    font-family:'Inter', sans-serif;
+    color:var(--ink);
   }
 
-  .hint{
-    position:absolute;
-    left:50%;
-    transform:translateX(-50%);
-    bottom:clamp(90px,16vh,150px);
-    z-index:5;
+  .page{
+    min-height:100vh;
     display:flex;
     flex-direction:column;
     align-items:center;
-    gap:6px;
-    pointer-events:none;
-    transition:opacity .5s ease;
-  }
-  .hint span{
-    font-family:'Baloo 2',sans-serif;
-    font-size:clamp(.85rem,1.7vw,1rem);
-    color:var(--cream);
-    background:rgba(36,26,61,.55);
-    padding:6px 14px;
-    border-radius:999px;
-    backdrop-filter:blur(2px);
-  }
-  .hint .arrow{
-    width:14px;height:14px;
-    border-right:3px solid var(--cream);
-    border-bottom:3px solid var(--cream);
-    transform:rotate(45deg);
-    animation:bob 1.4s ease-in-out infinite;
-    opacity:.9;
-  }
-  @keyframes bob{
-    0%,100%{transform:rotate(45deg) translateY(0);}
-    50%{transform:rotate(45deg) translateY(6px);}
+    padding:2.2rem 1.1rem 3rem;
   }
 
-  #chairHit{cursor:pointer;}
-  #chairHit:focus-visible{outline:3px solid var(--accent);outline-offset:6px;}
-
-  .rock{
-    transition:transform 1.15s cubic-bezier(.55,0,.2,1);
-    transform:translate(0,0) rotate(0deg);
-  }
-  .stage.collapse .rock{
-    transform:translate(var(--dx),var(--dy)) rotate(var(--rot));
+  header{
+    text-align:center;
+    max-width:34rem;
+    margin-bottom:1.4rem;
   }
 
-  .dust{
+  h1{
+    font-family:'Noto Sans Malayalam','Meera','Rachana',sans-serif;
+    font-weight:800;
+    font-size:clamp(1.9rem, 6vw, 2.9rem);
+    line-height:1.15;
+    margin:0 0 .5rem;
+    color:#FFF7E8;
+    text-shadow: 0 2px 0 rgba(0,0,0,.18);
+  }
+
+  .sub{
+    font-family:'Noto Sans Malayalam','Meera','Rachana',sans-serif;
+    font-size:1.05rem;
+    color:#FFF1D6;
+    margin:0;
+    opacity:.92;
+  }
+
+  .sub em{
+    font-style:normal;
+    font-weight:600;
+    color:#FFDDA6;
+  }
+
+  /* ---------- STAGE ---------- */
+
+  .stage-wrap{
+    position:relative;
+    width:min(92vw, 400px);
+    filter:drop-shadow(0 18px 30px rgba(10,20,20,.35));
+  }
+
+  svg.stage{
+    display:block;
+    width:100%;
+    height:auto;
+    border-radius:22px;
+    overflow:hidden;
+  }
+
+  .water-drop{
     opacity:0;
     transform-origin:center;
   }
-  .stage.collapse .dust{
-    animation:puff 1.3s ease-out forwards;
+  .stage[data-flow="on"] .water-drop{
+    animation:fall 0.9s linear infinite;
   }
-  @keyframes puff{
-    0%{opacity:0;transform:scale(.4) translateY(0);}
-    35%{opacity:.55;}
-    100%{opacity:0;transform:scale(1.6) translateY(-30px);}
+  @keyframes fall{
+    0%{opacity:0; transform:translateY(0) scaleY(0.6);}
+    12%{opacity:1;}
+    85%{opacity:1;}
+    100%{opacity:0; transform:translateY(200px) scaleY(1.3);}
   }
 
-  #person{
+  .puddle{
     opacity:0;
-    transform:translateY(14px) scale(.9);
-    transform-origin:280px 560px;
-    transition:opacity .55s ease, transform .55s cubic-bezier(.34,1.56,.64,1);
+    transition:opacity .5s ease .3s;
   }
-  .stage.sitting #person,
-  .stage.collapse #person,
-  .stage.settled #person{
-    opacity:1;
-    transform:translateY(0) scale(1);
+  .stage[data-flow="on"] .puddle{opacity:1;}
+
+  .bird-group{
+    transform-origin:200px 420px;
   }
-  #person.breathe{
-    animation:breathe 2.6s ease-in-out infinite;
+  .stage[data-anim="idle-bob"] .bird-group{
+    animation:bob 2.6s ease-in-out infinite;
   }
-  @keyframes breathe{
-    0%,100%{transform:translateY(0) scale(1);}
-    50%{transform:translateY(-3px) scale(1);}
+  @keyframes bob{
+    0%,100%{transform:translateY(0);}
+    50%{transform:translateY(-4px);}
   }
 
-  #camera{transition:transform .12s;}
-  .stage.shake #camera{
-    animation:shake .55s cubic-bezier(.36,.07,.19,.97);
+  .wet-shine{
+    opacity:0;
+    transition:opacity .4s ease;
+    pointer-events:none;
   }
-  @keyframes shake{
-    0%,100%{transform:translate(0,0);}
-    15%{transform:translate(-6px,3px);}
-    30%{transform:translate(5px,-4px);}
-    45%{transform:translate(-4px,4px);}
-    60%{transform:translate(6px,2px);}
-    75%{transform:translate(-3px,-3px);}
-    90%{transform:translate(2px,3px);}
+  .stage[data-wet="1"] .wet-shine{opacity:1;}
+  .stage[data-wet="1"] .bird-group .bird-fill{
+    filter:saturate(1.15) brightness(.94);
   }
+
+  .soap-bar{
+    opacity:0;
+    transform-origin:center;
+    transition:opacity .25s ease;
+  }
+  .stage[data-soaping="1"] .soap-bar{
+    opacity:1;
+    animation:scrub 0.4s ease-in-out infinite;
+  }
+  @keyframes scrub{
+    0%,100%{transform:rotate(-14deg) translateX(0);}
+    50%{transform:rotate(14deg) translateX(6px);}
+  }
+
+  .bubble{
+    opacity:0;
+    transform:scale(.2);
+    transform-box:fill-box;
+    transform-origin:center;
+    transition:transform .5s cubic-bezier(.34,1.56,.64,1), opacity .35s ease;
+  }
+  .stage[data-soaping="1"] .bubble,
+  .stage[data-bubbles="cover"] .bubble{
+    opacity:1;
+    transform:scale(1);
+  }
+  .stage[data-bubbles="pop"] .bubble{
+    opacity:0;
+    transform:scale(1.5);
+    transition:transform .55s ease-in, opacity .55s ease-in;
+  }
+  .bubble:nth-child(1){transition-delay:.02s;}
+  .bubble:nth-child(2){transition-delay:.08s;}
+  .bubble:nth-child(3){transition-delay:.05s;}
+  .bubble:nth-child(4){transition-delay:.12s;}
+  .bubble:nth-child(5){transition-delay:.03s;}
+  .bubble:nth-child(6){transition-delay:.15s;}
+  .bubble:nth-child(7){transition-delay:.09s;}
+  .bubble:nth-child(8){transition-delay:.06s;}
+  .bubble:nth-child(9){transition-delay:.18s;}
+  .bubble:nth-child(10){transition-delay:.11s;}
+  .bubble:nth-child(11){transition-delay:.14s;}
+  .bubble:nth-child(12){transition-delay:.04s;}
+
+  .sparkle{
+    opacity:0;
+    transform:scale(.3);
+    transform-box:fill-box;
+    transform-origin:center;
+  }
+  .stage[data-sparkle="1"] .sparkle{
+    animation:pop-sparkle .8s ease-out forwards;
+  }
+  .sparkle:nth-child(2){animation-delay:.05s;}
+  .sparkle:nth-child(3){animation-delay:.1s;}
+  .sparkle:nth-child(4){animation-delay:.02s;}
+  .sparkle:nth-child(5){animation-delay:.14s;}
+  .sparkle:nth-child(6){animation-delay:.07s;}
+  .sparkle:nth-child(7){animation-delay:.16s;}
+  .sparkle:nth-child(8){animation-delay:.03s;}
+  @keyframes pop-sparkle{
+    0%{opacity:0; transform:scale(.2);}
+    35%{opacity:1; transform:scale(1.15);}
+    100%{opacity:0; transform:scale(.6) translateY(-14px);}
+  }
+
+  /* ---------- CONTROLS ---------- */
+
+  .controls{
+    width:min(92vw, 400px);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:.85rem;
+    margin-top:1.4rem;
+  }
+
+  button{
+    font-family:'Noto Sans Malayalam','Meera','Rachana',sans-serif;
+    font-weight:700;
+    font-size:1.08rem;
+    border:none;
+    border-radius:999px;
+    padding:.85rem 1.8rem;
+    cursor:pointer;
+    color:var(--btn-text);
+    background:var(--btn);
+    box-shadow:0 4px 0 rgba(0,0,0,.22), 0 8px 16px rgba(0,0,0,.18);
+    transition:transform .12s ease, box-shadow .12s ease;
+    display:none;
+  }
+  button.visible{display:inline-block;}
+  button:hover{transform:translateY(-2px);}
+  button:active{transform:translateY(1px); box-shadow:0 2px 0 rgba(0,0,0,.22);}
+  button:focus-visible{outline:3px solid var(--focus); outline-offset:3px;}
+  button:disabled{opacity:.55; cursor:default; transform:none;}
+
+  #soapBtn{background:var(--btn-soap);}
+  #resetBtn{background:var(--btn-reset);}
 
   .caption{
-    position:absolute;
-    left:50%;
-    bottom:clamp(60px,14vh,120px);
-    transform:translate(-50%,10px);
-    z-index:6;
+    width:100%;
+    max-width:400px;
+    background:var(--panel);
+    border:2px solid var(--panel-edge);
+    border-radius:16px;
+    padding:.95rem 1.15rem;
     text-align:center;
-    opacity:0;
-    pointer-events:none;
-    transition:opacity .5s ease, transform .5s ease;
-    width:min(88vw,520px);
+    display:none;
+    box-shadow:0 6px 18px rgba(0,0,0,.15);
   }
-  .stage.settled .caption{
-    opacity:1;
-    transform:translate(-50%,0);
-    pointer-events:auto;
+  .caption.visible{display:block;}
+  .caption .ml{
+    font-family:'Noto Sans Malayalam','Meera','Rachana',sans-serif;
+    font-weight:700;
+    font-size:1.15rem;
+    margin:0 0 .2rem;
   }
-  .caption p{
-    margin:0 0 6px;
-    font-weight:600;
-    font-size:clamp(1.05rem,2.6vw,1.5rem);
-    color:var(--cream);
-    text-shadow:0 2px 14px rgba(0,0,0,.5);
+  .caption .en{
+    font-size:.85rem;
+    color:#556;
+    margin:0;
   }
-  .caption p.small{
-    font-weight:500;
-    font-size:clamp(.85rem,1.8vw,1.02rem);
-    color:var(--cream-dim);
-  }
-  button#again{
-    margin-top:16px;
-    font-family:'Baloo 2',sans-serif;
-    font-weight:600;
-    font-size:clamp(.9rem,1.9vw,1.05rem);
-    color:var(--ink);
-    background:var(--accent);
-    border:none;
-    padding:11px 26px;
-    border-radius:999px;
-    cursor:pointer;
-    box-shadow:0 6px 20px rgba(0,0,0,.3);
-    transition:transform .15s ease, box-shadow .15s ease;
-  }
-  button#again:hover{transform:translateY(-2px);box-shadow:0 9px 24px rgba(0,0,0,.35);}
-  button#again:active{transform:translateY(0);}
-  button#again:focus-visible{outline:3px solid var(--cream);outline-offset:3px;}
 
-  @media (prefers-reduced-motion: reduce){
-    .rock,#person,.hint .arrow,.caption,#camera{transition:none !important;animation:none !important;}
-    .stage.collapse .rock{transform:translate(var(--dx),var(--dy)) rotate(var(--rot));}
-    .stage.settled .caption{opacity:1;transform:translate(-50%,0);}
+  footer{
+    margin-top:2.2rem;
+    text-align:center;
+    font-size:.78rem;
+    color:#FFF1D6;
+    opacity:.75;
+    max-width:26rem;
   }
+  footer a{color:#FFDDA6;}
 </style>
 </head>
 <body>
-<div id="stage" class="stage idle">
-  <div class="title-wrap">
-    <h1>ഇത്തിരി നേരം ഇരുന്നാൽ എന്താ, മല ഇടിഞ്ഞു വീഴുമോ?</h1>
-    <div class="sub">ഒന്ന് ഇരുന്നു നോക്കൂ...</div>
-  </div>
 
-  <div class="hint" id="hint">
-    <span>കസേരയിൽ ഞെക്കൂ</span>
-    <div class="arrow"></div>
-  </div>
+<div class="page">
 
-  <svg id="scene" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg">
-    <defs>
-      <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="var(--sky-top)"/>
-        <stop offset="45%" stop-color="var(--sky-mid)"/>
-        <stop offset="75%" stop-color="var(--sky-low)"/>
-        <stop offset="100%" stop-color="var(--sky-horizon)"/>
-      </linearGradient>
-      <radialGradient id="sunGlow" cx="50%" cy="50%" r="50%">
-        <stop offset="0%" stop-color="#ffe3ad" stop-opacity="0.9"/>
-        <stop offset="100%" stop-color="#ffe3ad" stop-opacity="0"/>
-      </radialGradient>
-      <linearGradient id="groundGrad" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="var(--ground-hi)"/>
-        <stop offset="100%" stop-color="var(--ground)"/>
-      </linearGradient>
-    </defs>
+  <header>
+    <h1>കാക്ക കുളിച്ചാൽ കൊക്കാവില്ല</h1>
+    <p class="sub">പഴഞ്ചൊല്ല് പറയുന്നു, കാക്ക കുളിച്ചാൽ <em>കൊക്കാവില്ല</em> എന്ന്. ശരിയാണോ എന്ന് നമുക്ക് നോക്കാം — ഷവർ ഓണാക്കി കാക്കയെ സോപ്പിട്ട് കുളിപ്പിക്കൂ.</p>
+  </header>
 
-    <rect x="0" y="0" width="1200" height="700" fill="url(#skyGrad)"/>
-    <circle cx="930" cy="190" r="150" fill="url(#sunGlow)"/>
-    <circle cx="930" cy="190" r="46" fill="#ffe9c2" opacity="0.9"/>
+  <div class="stage-wrap">
+    <svg class="stage" id="stage" data-flow="off" data-wet="0" data-soaping="0" data-bubbles="hide" data-sparkle="0" data-anim="idle-bob" viewBox="0 0 400 520" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="ഒരു കാക്ക ഷവറിനടിയിൽ നിൽക്കുന്ന ദൃശ്യം">
 
-    <g id="camera">
-      <!-- far mountains, static backdrop -->
-      <path d="M0,430 L120,330 L230,410 L340,300 L470,420 L600,340 L720,430 L860,320 L1000,420 L1120,350 L1200,430 L1200,700 L0,700 Z" fill="var(--mtn-far)" opacity="0.55"/>
-      <path d="M0,470 L150,380 L280,460 L420,360 L560,470 L720,390 L880,470 L1040,380 L1200,470 L1200,700 L0,700 Z" fill="var(--mtn-mid)" opacity="0.75"/>
+      <defs>
+        <pattern id="wallTile" width="22" height="22" patternUnits="userSpaceOnUse">
+          <rect width="22" height="22" fill="var(--tile)"/>
+          <rect width="21" height="21" fill="none" stroke="var(--tile-grout)" stroke-width="1"/>
+        </pattern>
+        <pattern id="floorTile" width="46" height="16" patternUnits="userSpaceOnUse">
+          <rect width="46" height="16" fill="var(--floor)"/>
+          <rect width="45" height="15" fill="none" stroke="var(--floor-grout)" stroke-width="1"/>
+        </pattern>
+        <linearGradient id="skyGlow" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#DFF1F7"/>
+          <stop offset="1" stop-color="#F4E3C6"/>
+        </linearGradient>
+      </defs>
 
-      <!-- collapsing mountain mass, sits behind the chair -->
-      <g id="rockMass">
-        <path class="rock" style="--dx:-38px;--dy:250px;--rot:-14deg;" d="M330,560 L470,220 L560,560 Z" fill="var(--rock-a)"/>
-        <path class="rock" style="--dx:52px;--dy:235px;--rot:11deg;" d="M560,560 L470,220 L640,300 L700,560 Z" fill="var(--rock-b)"/>
-        <path class="rock" style="--dx:-60px;--dy:210px;--rot:-9deg;" d="M330,560 L470,220 L400,340 L280,560 Z" fill="var(--rock-c)"/>
-        <path class="rock" style="--dx:70px;--dy:200px;--rot:16deg;" d="M700,560 L640,300 L780,380 L820,560 Z" fill="var(--rock-a)"/>
-        <path class="rock" style="--dx:-22px;--dy:270px;--rot:-6deg;" d="M400,560 L470,340 L540,560 Z" fill="var(--rock-b)"/>
-        <path class="rock" style="--dx:20px;--dy:255px;--rot:8deg;" d="M540,560 L470,340 L610,420 L640,560 Z" fill="var(--rock-c)"/>
-        <path class="rock" style="--dx:-85px;--dy:180px;--rot:-18deg;" d="M280,560 L400,340 L340,420 L230,560 Z" fill="var(--rock-b)"/>
-        <path class="rock" style="--dx:90px;--dy:175px;--rot:20deg;" d="M820,560 L780,380 L860,440 L900,560 Z" fill="var(--rock-c)"/>
-      </g>
+      <!-- wall + floor -->
+      <rect x="0" y="0" width="400" height="440" fill="url(#wallTile)"/>
+      <rect x="0" y="440" width="400" height="80" fill="url(#floorTile)"/>
+      <rect x="0" y="0" width="400" height="440" fill="url(#skyGlow)" opacity="0.12"/>
 
-      <!-- dust puffs, hidden until collapse -->
-      <g id="dustGroup">
-        <circle class="dust" cx="420" cy="540" r="46" fill="#cbb9d8"/>
-        <circle class="dust" cx="520" cy="520" r="60" fill="#d8c8bd"/>
-        <circle class="dust" cx="600" cy="545" r="40" fill="#c9b6cf"/>
-        <circle class="dust" cx="470" cy="500" r="34" fill="#e0d2c3"/>
-        <circle class="dust" cx="650" cy="510" r="50" fill="#cdbccf"/>
-      </g>
-
-      <!-- ground -->
-      <path d="M0,555 Q600,520 1200,555 L1200,700 L0,700 Z" fill="url(#groundGrad)"/>
-
-      <!-- chair (front view), sitting figure appears behind the seat back, in front of the seat -->
-      <g id="chairHit" role="button" tabindex="0" aria-label="കസേരയിൽ ഇരിക്കാൻ ഞെക്കുക">
-        <!-- back legs -->
-        <rect x="245" y="600" width="12" height="70" rx="3" fill="var(--wood-dark)"/>
-        <rect x="313" y="600" width="12" height="70" rx="3" fill="var(--wood-dark)"/>
-
-        <!-- person sits between seat and backrest -->
-        <g id="person">
-          <ellipse cx="280" cy="590" rx="34" ry="10" fill="#000" opacity="0.18"/>
-          <path d="M254,585 Q254,540 280,540 Q306,540 306,585 L306,600 L254,600 Z" fill="#ffb15e"/>
-          <circle cx="280" cy="512" r="24" fill="#ffd9a0"/>
-          <path d="M256,505 Q280,478 304,505 Q304,486 280,484 Q256,486 256,505 Z" fill="#3a2e50"/>
-          <path d="M254,565 Q234,585 240,610" stroke="#ffd9a0" stroke-width="12" stroke-linecap="round" fill="none"/>
-          <path d="M306,565 Q326,585 320,610" stroke="#ffd9a0" stroke-width="12" stroke-linecap="round" fill="none"/>
-          <path d="M262,596 Q262,560 300,558" stroke="#ffb15e" stroke-width="16" stroke-linecap="round" fill="none" opacity="0"/>
+      <!-- shower pipe + head -->
+      <rect x="188" y="0" width="16" height="46" fill="#A9B7BC"/>
+      <rect x="188" y="0" width="6" height="46" fill="#CBD6D9"/>
+      <g transform="translate(0,0)">
+        <rect x="140" y="42" width="120" height="26" rx="13" fill="#B7C4C8" stroke="#8FA0A6" stroke-width="2"/>
+        <rect x="140" y="42" width="120" height="10" rx="5" fill="#CDD8DB"/>
+        <g fill="#7D8E93">
+          <circle cx="155" cy="68" r="2.4"/><circle cx="169" cy="68" r="2.4"/><circle cx="183" cy="68" r="2.4"/>
+          <circle cx="197" cy="68" r="2.4"/><circle cx="211" cy="68" r="2.4"/><circle cx="225" cy="68" r="2.4"/>
+          <circle cx="239" cy="68" r="2.4"/><circle cx="253" cy="68" r="2.4"/>
         </g>
-
-        <!-- seat -->
-        <rect x="235" y="596" width="90" height="16" rx="4" fill="var(--wood)"/>
-        <!-- backrest -->
-        <rect x="235" y="500" width="90" height="14" rx="4" fill="var(--wood)"/>
-        <rect x="248" y="514" width="14" height="82" fill="var(--wood-dark)"/>
-        <rect x="273" y="514" width="14" height="82" fill="var(--wood-dark)"/>
-        <rect x="298" y="514" width="14" height="82" fill="var(--wood-dark)"/>
-        <!-- front legs -->
-        <rect x="238" y="608" width="13" height="66" rx="3" fill="var(--wood)"/>
-        <rect x="309" y="608" width="13" height="66" rx="3" fill="var(--wood)"/>
-        <!-- invisible larger hit area -->
-        <rect x="205" y="470" width="150" height="230" fill="transparent"/>
       </g>
-    </g>
-  </svg>
 
-  <div class="caption">
-    <p>പറഞ്ഞില്ലേ ഞാൻ!</p>
-    <p class="small">ഇത്തിരി നേരം ഇരുന്നാൽ, മല ശരിക്കും ഇടിഞ്ഞു വീഴും.</p>
-    <button id="again">വീണ്ടും ഇരിക്കാം</button>
+      <!-- water -->
+      <g id="waterGroup">
+        <rect class="water-drop" x="153" y="70" width="4" height="26" rx="2" fill="var(--water)" style="animation-delay:-.05s"/>
+        <rect class="water-drop" x="167" y="70" width="4" height="26" rx="2" fill="var(--water-deep)" style="animation-delay:-.28s"/>
+        <rect class="water-drop" x="181" y="70" width="4" height="26" rx="2" fill="var(--water)" style="animation-delay:-.5s"/>
+        <rect class="water-drop" x="195" y="70" width="4" height="26" rx="2" fill="var(--water-deep)" style="animation-delay:-.14s"/>
+        <rect class="water-drop" x="209" y="70" width="4" height="26" rx="2" fill="var(--water)" style="animation-delay:-.38s"/>
+        <rect class="water-drop" x="223" y="70" width="4" height="26" rx="2" fill="var(--water-deep)" style="animation-delay:-.62s"/>
+        <rect class="water-drop" x="237" y="70" width="4" height="26" rx="2" fill="var(--water)" style="animation-delay:-.2s"/>
+        <rect class="water-drop" x="251" y="70" width="4" height="26" rx="2" fill="var(--water-deep)" style="animation-delay:-.44s"/>
+      </g>
+
+      <!-- puddle -->
+      <ellipse class="puddle" cx="200" cy="452" rx="72" ry="12" fill="var(--water)" opacity="0.55"/>
+      <ellipse class="puddle" cx="200" cy="452" rx="46" ry="7" fill="var(--water-deep)" opacity="0.4"/>
+
+      <!-- bird -->
+      <g class="bird-group" id="birdGroup"></g>
+
+      <!-- wet shine overlay -->
+      <g class="wet-shine">
+        <path d="M172,300 Q168,330 176,358" stroke="#EAF7FB" stroke-width="3" stroke-linecap="round" fill="none" opacity="0.55"/>
+        <path d="M226,310 Q232,336 224,360" stroke="#EAF7FB" stroke-width="3" stroke-linecap="round" fill="none" opacity="0.45"/>
+      </g>
+
+      <!-- soap bar -->
+      <g class="soap-bar" transform="translate(255,330)">
+        <rect x="-22" y="-12" width="44" height="24" rx="10" fill="#FFE8B0" stroke="#E8B85C" stroke-width="2"/>
+        <path d="M-12,0 Q0,-6 12,0" stroke="#E8B85C" stroke-width="2" fill="none" opacity="0.7"/>
+      </g>
+
+      <!-- bubbles -->
+      <g id="bubbleGroup">
+        <circle class="bubble" cx="168" cy="330" r="30" fill="#FFFFFF" opacity="0.94"/>
+        <circle class="bubble" cx="222" cy="320" r="34" fill="#FFFFFF" opacity="0.94"/>
+        <circle class="bubble" cx="196" cy="360" r="38" fill="#FFFFFF" opacity="0.96"/>
+        <circle class="bubble" cx="150" cy="370" r="24" fill="#F4FBFD" opacity="0.94"/>
+        <circle class="bubble" cx="242" cy="365" r="26" fill="#F4FBFD" opacity="0.94"/>
+        <circle class="bubble" cx="200" cy="290" r="26" fill="#FFFFFF" opacity="0.95"/>
+        <circle class="bubble" cx="180" cy="400" r="20" fill="#FFFFFF" opacity="0.92"/>
+        <circle class="bubble" cx="220" cy="402" r="18" fill="#F4FBFD" opacity="0.92"/>
+        <circle class="bubble" cx="160" cy="300" r="14" fill="#FFFFFF" opacity="0.9"/>
+        <circle class="bubble" cx="238" cy="295" r="12" fill="#FFFFFF" opacity="0.9"/>
+        <circle class="bubble" cx="205" cy="415" r="14" fill="#FFFFFF" opacity="0.9"/>
+        <circle class="bubble" cx="145" cy="340" r="12" fill="#FFFFFF" opacity="0.88"/>
+      </g>
+
+      <!-- sparkles on reveal -->
+      <g id="sparkleGroup" fill="#FFE59A">
+        <path class="sparkle" d="M150,260 l4,12 12,4 -12,4 -4,12 -4,-12 -12,-4 12,-4 z"/>
+        <path class="sparkle" d="M250,270 l3,9 9,3 -9,3 -3,9 -3,-9 -9,-3 9,-3 z"/>
+        <path class="sparkle" d="M200,240 l4,11 11,4 -11,4 -4,11 -4,-11 -11,-4 11,-4 z"/>
+        <path class="sparkle" d="M130,340 l3,8 8,3 -8,3 -3,8 -3,-8 -8,-3 8,-3 z"/>
+        <path class="sparkle" d="M270,330 l3,8 8,3 -8,3 -3,8 -3,-8 -8,-3 8,-3 z"/>
+        <path class="sparkle" d="M170,420 l3,8 8,3 -8,3 -3,8 -3,-8 -8,-3 8,-3 z"/>
+        <path class="sparkle" d="M235,410 l3,8 8,3 -8,3 -3,8 -3,-8 -8,-3 8,-3 z"/>
+        <path class="sparkle" d="M200,400 l3,8 8,3 -8,3 -3,8 -3,-8 -8,-3 8,-3 z"/>
+      </g>
+
+    </svg>
   </div>
+
+  <div class="controls">
+    <button id="showerBtn" class="visible" type="button">ഷവർ ഓൺ ചെയ്യുക</button>
+    <button id="soapBtn" type="button">സോപ്പ് തേക്കുക</button>
+    <div class="caption" id="caption" role="status" aria-live="polite">
+      <p class="ml" id="captionMl"></p>
+      <p class="en" id="captionEn"></p>
+    </div>
+    <button id="resetBtn" type="button">വീണ്ടും കുളിപ്പിക്കാം</button>
+  </div>
+
+  <footer>
+    ഓർമ്മിക്കുക: എത്ര കുളിച്ചാലും ഇത് ഒരിക്കലും ഒരു <strong>കൊക്ക്</strong> ആവില്ല. ബാക്കി ഏത് പക്ഷിയും ആവാം.
+  </footer>
+
 </div>
 
 <script>
 (function(){
-  const stage = document.getElementById('stage');
-  const chair = document.getElementById('chairHit');
-  const hint = document.getElementById('hint');
-  const person = document.getElementById('person');
-  const again = document.getElementById('again');
-  let busy = false;
-  let timers = [];
+  "use strict";
 
-  function clearTimers(){
-    timers.forEach(t => clearTimeout(t));
-    timers = [];
-  }
+  var stage = document.getElementById('stage');
+  var birdGroup = document.getElementById('birdGroup');
+  var showerBtn = document.getElementById('showerBtn');
+  var soapBtn = document.getElementById('soapBtn');
+  var resetBtn = document.getElementById('resetBtn');
+  var caption = document.getElementById('caption');
+  var captionMl = document.getElementById('captionMl');
+  var captionEn = document.getElementById('captionEn');
 
-  function sit(){
-    if(busy || !stage.classList.contains('idle')) return;
-    busy = true;
-    stage.classList.remove('idle');
-    stage.classList.add('sitting');
-    hint.style.opacity = '0';
-    chair.setAttribute('aria-disabled','true');
+  var LEG_TEMPLATE = function(x1,x2,color){
+    return '<path d="M'+x1+',415 L'+(x1-3)+',441" stroke="'+color+'" stroke-width="6" stroke-linecap="round"/>' +
+           '<path d="M'+x2+',415 L'+(x2+3)+',441" stroke="'+color+'" stroke-width="6" stroke-linecap="round"/>' +
+           '<path d="M'+(x1-11)+',441 l-9,4 M'+(x1-3)+',441 l0,7 M'+(x1+5)+',441 l8,4" stroke="'+color+'" stroke-width="4" stroke-linecap="round" fill="none"/>' +
+           '<path d="M'+(x2-5)+',441 l-8,4 M'+(x2+3)+',441 l0,7 M'+(x2+11)+',441 l9,4" stroke="'+color+'" stroke-width="4" stroke-linecap="round" fill="none"/>';
+  };
 
-    timers.push(setTimeout(() => {
-      person.classList.add('breathe');
-    }, 600));
+  var CROW =
+    '<ellipse class="bird-fill" cx="200" cy="345" rx="46" ry="58" fill="#20242B"/>' +
+    '<ellipse cx="207" cy="368" rx="28" ry="32" fill="#33383F" opacity="0.55"/>' +
+    '<path d="M160,300 Q136,338 162,382 Q176,352 170,318 Z" fill="#171A1F"/>' +
+    '<path d="M150,318 Q118,328 128,362 Q146,346 150,318 Z" fill="#171A1F"/>' +
+    '<circle class="bird-fill" cx="205" cy="280" r="33" fill="#20242B"/>' +
+    '<path d="M232,278 Q264,282 262,290 Q246,297 230,292 Z" fill="#2B2B2E"/>' +
+    '<circle cx="222" cy="270" r="5" fill="#0B0B0C"/><circle cx="224" cy="268" r="1.6" fill="#FFFFFF"/>' +
+    LEG_TEMPLATE(183,218,'#D98A2B');
 
-    timers.push(setTimeout(() => {
-      person.classList.remove('breathe');
-      stage.classList.add('shake');
-      stage.classList.add('collapse');
-    }, 3300));
+  var BIRDS = {
+    peacock: {
+      ml: 'മയിൽ', en: 'It is now a peacock.',
+      svg:
+        (function(){
+          var feathers = '';
+          var angles = [-60,-40,-20,0,20,40,60];
+          var colors = ['#0B3D91','#123F7A','#0B3D91','#123F7A','#0B3D91','#123F7A','#0B3D91'];
+          for (var i=0;i<angles.length;i++){
+            feathers += '<g transform="rotate('+angles[i]+' 200 380)">' +
+              '<line x1="200" y1="380" x2="200" y2="255" stroke="'+colors[i]+'" stroke-width="7" stroke-linecap="round"/>' +
+              '<circle cx="200" cy="250" r="11" fill="'+colors[i]+'"/>' +
+              '<circle cx="200" cy="250" r="7" fill="#2E9E6B"/>' +
+              '<circle cx="200" cy="250" r="3" fill="#F2C14E"/>' +
+              '</g>';
+          }
+          return feathers +
+            '<ellipse class="bird-fill" cx="200" cy="345" rx="40" ry="50" fill="#1C5FA8"/>' +
+            '<ellipse cx="205" cy="365" rx="22" ry="26" fill="#2E7FCB" opacity="0.5"/>' +
+            '<circle class="bird-fill" cx="205" cy="278" r="26" fill="#1C5FA8"/>' +
+            '<line x1="200" y1="252" x2="196" y2="232" stroke="#1C5FA8" stroke-width="3" stroke-linecap="round"/>' +
+            '<line x1="205" y1="250" x2="206" y2="228" stroke="#1C5FA8" stroke-width="3" stroke-linecap="round"/>' +
+            '<line x1="210" y1="252" x2="215" y2="232" stroke="#1C5FA8" stroke-width="3" stroke-linecap="round"/>' +
+            '<circle cx="196" cy="230" r="3" fill="#59C6A0"/><circle cx="206" cy="226" r="3" fill="#59C6A0"/><circle cx="215" cy="230" r="3" fill="#59C6A0"/>' +
+            '<path d="M228,276 Q246,278 244,285 Q234,289 226,285 Z" fill="#2B2B2E"/>' +
+            '<circle cx="216" cy="270" r="4.5" fill="#0B0B0C"/><circle cx="218" cy="268" r="1.4" fill="#FFFFFF"/>' +
+            LEG_TEMPLATE(188,214,'#7A7A7A');
+        })()
+    },
 
-    timers.push(setTimeout(() => {
-      stage.classList.add('settled');
-      busy = false;
-    }, 4700));
-  }
+    hornbill: {
+      ml: 'വേഴാമ്പൽ', en: 'It is now a hornbill \u2014 Kerala\u2019s state bird.',
+      svg:
+        '<ellipse class="bird-fill" cx="200" cy="345" rx="44" ry="56" fill="#16181C"/>' +
+        '<ellipse cx="200" cy="368" rx="34" ry="16" fill="#F5F1E6"/>' +
+        '<path d="M162,318 Q206,406 200,414 Q186,404 172,392 Q182,358 162,318 Z" fill="#16181C"/>' +
+        '<rect x="180" y="406" width="40" height="10" fill="#F5F1E6"/>' +
+        '<circle class="bird-fill" cx="203" cy="280" r="30" fill="#16181C"/>' +
+        '<path d="M228,270 Q286,264 292,278 Q286,290 232,292 Z" fill="#F2A93B"/>' +
+        '<path d="M234,262 Q268,254 278,266 Q266,272 232,274 Z" fill="#E8871E"/>' +
+        '<circle cx="214" cy="272" r="4.5" fill="#F4D06B"/><circle cx="214" cy="272" r="2" fill="#0B0B0C"/>' +
+        LEG_TEMPLATE(184,216,'#3A3A3A')
+    },
 
-  function reset(){
-    clearTimers();
-    stage.className = 'stage idle';
-    person.classList.remove('breathe');
-    hint.style.opacity = '1';
-    chair.removeAttribute('aria-disabled');
-    busy = false;
-  }
+    kingfisher: {
+      ml: 'മീൻകൊത്തി', en: 'It is now a kingfisher.',
+      svg:
+        '<ellipse class="bird-fill" cx="200" cy="352" rx="38" ry="48" fill="#FFFFFF"/>' +
+        '<path d="M164,320 Q160,368 186,394 Q206,376 200,338 Q182,326 164,320 Z" fill="#1E6FB8"/>' +
+        '<circle class="bird-fill" cx="203" cy="282" r="27" fill="#7A3B1E"/>' +
+        '<path d="M226,278 Q276,282 274,288 Q276,294 226,296 Z" fill="#D8271A"/>' +
+        '<circle cx="212" cy="274" r="4.3" fill="#0B0B0C"/><circle cx="214" cy="272" r="1.3" fill="#FFFFFF"/>' +
+        LEG_TEMPLATE(186,212,'#D8271A')
+    },
 
-  chair.addEventListener('click', sit);
-  chair.addEventListener('keydown', (e) => {
-    if(e.key === 'Enter' || e.key === ' '){
-      e.preventDefault();
-      sit();
+    parakeet: {
+      ml: 'തത്ത', en: 'It is now a parakeet.',
+      svg:
+        '<path d="M198,360 Q206,410 194,462 Q186,412 190,362 Z" fill="#2E9E4E"/>' +
+        '<ellipse class="bird-fill" cx="200" cy="342" rx="36" ry="46" fill="#4CAF50"/>' +
+        '<ellipse cx="204" cy="360" rx="20" ry="24" fill="#6FC978" opacity="0.6"/>' +
+        '<circle class="bird-fill" cx="204" cy="278" r="25" fill="#4CAF50"/>' +
+        '<path d="M204,300 Q204,306 204,308" stroke="#E85D9E" stroke-width="3" fill="none"/>' +
+        '<path d="M226,272 Q244,278 234,290 Q224,290 220,280 Z" fill="#D8271A"/>' +
+        '<circle cx="214" cy="270" r="4.2" fill="#0B0B0C"/><circle cx="216" cy="268" r="1.3" fill="#FFFFFF"/>' +
+        LEG_TEMPLATE(188,212,'#7A7A7A')
+    },
+
+    flamingo: {
+      ml: 'ഫ്ലമിംഗോ', en: 'It is now a flamingo.',
+      svg:
+        '<path d="M186,300 Q170,340 190,362" stroke="#E85D9E" stroke-width="5" stroke-linecap="round" fill="none"/>' +
+        '<ellipse class="bird-fill" cx="200" cy="325" rx="34" ry="36" fill="#F77FBE"/>' +
+        '<ellipse cx="204" cy="336" rx="18" ry="18" fill="#FBB3D8" opacity="0.6"/>' +
+        '<path d="M212,300 Q234,262 208,238 Q188,220 202,202" stroke="#F77FBE" stroke-width="13" stroke-linecap="round" fill="none"/>' +
+        '<circle class="bird-fill" cx="203" cy="198" r="15" fill="#F77FBE"/>' +
+        '<path d="M215,196 Q236,200 234,207 Q224,213 213,208 Z" fill="#3A3A3A"/>' +
+        '<path d="M215,196 Q230,198 229,203 Q221,206 213,203 Z" fill="#F77FBE"/>' +
+        '<circle cx="210" cy="194" r="3" fill="#0B0B0C"/>' +
+        '<path d="M188,392 L184,441" stroke="#E8A9C6" stroke-width="4" stroke-linecap="round"/>' +
+        '<path d="M182,441 l-8,4 M188,441 l0,7 M194,441 l8,4" stroke="#E8A9C6" stroke-width="3.5" stroke-linecap="round" fill="none"/>' +
+        '<path d="M214,352 Q228,362 218,380" stroke="#E8A9C6" stroke-width="4" stroke-linecap="round" fill="none"/>'
+    },
+
+    owl: {
+      ml: 'മൂങ്ങ', en: 'It is now an owl.',
+      svg:
+        '<ellipse class="bird-fill" cx="200" cy="352" rx="42" ry="50" fill="#8B5E3C"/>' +
+        '<ellipse cx="200" cy="372" rx="24" ry="26" fill="#B08256" opacity="0.7"/>' +
+        '<path d="M150,330 Q136,352 152,376 Q160,354 156,336 Z" fill="#6E4A2C"/>' +
+        '<path d="M250,330 Q264,352 248,376 Q240,354 244,336 Z" fill="#6E4A2C"/>' +
+        '<circle class="bird-fill" cx="200" cy="298" r="38" fill="#8B5E3C"/>' +
+        '<path d="M172,266 L180,286 L164,282 Z" fill="#8B5E3C"/>' +
+        '<path d="M228,266 L220,286 L236,282 Z" fill="#8B5E3C"/>' +
+        '<circle cx="184" cy="298" r="15" fill="#FFFFFF"/><circle cx="216" cy="298" r="15" fill="#FFFFFF"/>' +
+        '<circle cx="184" cy="298" r="7" fill="#4A2F17"/><circle cx="216" cy="298" r="7" fill="#4A2F17"/>' +
+        '<circle cx="186" cy="295" r="2" fill="#FFFFFF"/><circle cx="218" cy="295" r="2" fill="#FFFFFF"/>' +
+        '<path d="M196,308 L204,308 L200,318 Z" fill="#F2A93B"/>' +
+        LEG_TEMPLATE(186,214,'#F2A93B')
     }
+  };
+
+  var birdKeys = Object.keys(BIRDS);
+  var lastBird = null;
+
+  function pickBird(){
+    var k;
+    do { k = birdKeys[Math.floor(Math.random()*birdKeys.length)]; }
+    while (birdKeys.length > 1 && k === lastBird);
+    lastBird = k;
+    return k;
+  }
+
+  function setBird(svgMarkup){
+    birdGroup.innerHTML = svgMarkup;
+  }
+
+  function resetAll(){
+    stage.setAttribute('data-flow','off');
+    stage.setAttribute('data-wet','0');
+    stage.setAttribute('data-soaping','0');
+    stage.setAttribute('data-bubbles','hide');
+    stage.setAttribute('data-sparkle','0');
+    setBird(CROW);
+    showerBtn.classList.add('visible');
+    showerBtn.disabled = false;
+    soapBtn.classList.remove('visible');
+    soapBtn.disabled = false;
+    resetBtn.classList.remove('visible');
+    caption.classList.remove('visible');
+    captionMl.textContent = '';
+    captionEn.textContent = '';
+    stage.setAttribute('aria-label','ഒരു കാക്ക ഷവറിനടിയിൽ നിൽക്കുന്ന ദൃശ്യം');
+  }
+
+  showerBtn.addEventListener('click', function(){
+    stage.setAttribute('data-flow','on');
+    stage.setAttribute('data-wet','1');
+    showerBtn.disabled = true;
+    window.setTimeout(function(){
+      soapBtn.classList.add('visible');
+    }, 500);
   });
-  again.addEventListener('click', reset);
+
+  soapBtn.addEventListener('click', function(){
+    soapBtn.disabled = true;
+    stage.setAttribute('data-soaping','1');
+    stage.setAttribute('data-bubbles','cover');
+
+    window.setTimeout(function(){
+      var key = pickBird();
+      var bird = BIRDS[key];
+      setBird(bird.svg);
+      stage.setAttribute('data-wet','0');
+      stage.setAttribute('data-soaping','0');
+      stage.setAttribute('data-bubbles','pop');
+
+      window.setTimeout(function(){
+        stage.setAttribute('data-sparkle','1');
+        captionMl.textContent = 'ഹോ! ഇപ്പോൾ ഒരു ' + bird.ml + ' ആയി!';
+        captionEn.textContent = bird.en + ' Still not a crane, though.';
+        caption.classList.add('visible');
+        stage.setAttribute('aria-label', 'കാക്ക കുളിച്ച് ' + bird.ml + ' ആയി മാറിയ ദൃശ്യം');
+        soapBtn.classList.remove('visible');
+        resetBtn.classList.add('visible');
+      }, 150);
+    }, 1300);
+  });
+
+  resetBtn.addEventListener('click', resetAll);
+
+  resetAll();
 })();
 </script>
+
 </body>
 </html>
