@@ -1,20 +1,417 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="ml">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Boat 2 — Lantern Reach</title>
-<meta name="description" content="Fishermen say the lanterns here never quite go out, even on moonless nights.">
-<link rel="stylesheet" href="style.css">
-</head>
-<body class="page-boat" style="background: linear-gradient(160deg, #1f4e49 0%, #0e3b3a 100%);">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>എല്ലാത്തിനും അതിന്റേതായ സമയം ഉണ്ട് ദാസാ!</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anek+Malayalam:wght@500;600;700;800&family=Noto+Sans+Malayalam:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #1B0E08;
+    --bg-vignette: #0F0704;
+    --cream: #F4E2B8;
+    --red: #C8102E;
+    --gold: #D4A017;
+    --brown-ink: #3D2A18;
+    --brown-soft: #6B4A2A;
+  }
 
-<section class="boat-hero">
-  <img class="big-head" src="head2.png" alt="Rower of boat 2">
-  <h1>Boat 2: Lantern Reach</h1>
-  <p>Fishermen say the lanterns here never quite go out, even on moonless nights.</p>
-  <a class="back-link" href="index.html">&larr; Back to the harbor</a>
-</section>
+  *{
+    box-sizing: border-box;
+    font-family: 'Noto Sans Malayalam', 'Anek Malayalam', sans-serif;
+  }
+
+  html, body{
+    margin:0;
+    padding:0;
+    min-height:100%;
+  }
+
+  body{
+    background:
+      radial-gradient(ellipse at top, #2A160C 0%, var(--bg) 45%, var(--bg-vignette) 100%);
+    color: var(--cream);
+    font-family: 'Noto Sans Malayalam', 'Anek Malayalam', sans-serif;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    min-height:100vh;
+    padding: 32px 18px;
+    overflow-x:hidden;
+  }
+
+  /* subtle film-grain texture via layered radial dots */
+  body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    background-image: radial-gradient(rgba(244,226,184,0.035) 1px, transparent 1px);
+    background-size: 3px 3px;
+    pointer-events:none;
+  }
+
+  .stage{
+    width:100%;
+    max-width: 460px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap: 28px;
+  }
+
+  /* ---------- Header ---------- */
+  .marquee{
+    text-align:center;
+  }
+
+  .marquee .eyebrow{
+    font-family:'Noto Sans Malayalam', 'Anek Malayalam', sans-serif;
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    color: var(--brown-soft);
+    margin: 0 0 10px;
+  }
+
+  h1{
+    font-family: 'Anek Malayalam', 'Noto Sans Malayalam', sans-serif;
+    font-weight: 800;
+    font-size: clamp(30px, 8vw, 44px);
+    line-height: 1.25;
+    margin: 0;
+    color: var(--gold);
+    text-shadow: 0 2px 0 #7A1B1B, 0 4px 14px rgba(200,16,46,0.35);
+  }
+
+  h1 span{
+    color: var(--red);
+  }
+
+  /* ---------- Ask card ---------- */
+  .ask-card{
+    width:100%;
+    background: linear-gradient(180deg, #2A1608, #1F1108);
+    border: 1px solid rgba(212,160,23,0.35);
+    border-radius: 18px;
+    padding: 28px 24px;
+    position:relative;
+  }
+
+  .ask-card::before{
+    content:"";
+    position:absolute;
+    inset:6px;
+    border: 1px dashed rgba(212,160,23,0.25);
+    border-radius: 12px;
+    pointer-events:none;
+  }
+
+  .ask-label{
+    font-family:'Anek Malayalam', 'Noto Sans Malayalam', sans-serif;
+    font-size: 20px;
+    color: var(--cream);
+    text-align:center;
+    margin: 0 0 4px;
+  }
+
+  .ask-sub{
+    text-align:center;
+    color: var(--brown-soft);
+    font-size: 14px;
+    margin: 0 0 20px;
+  }
+
+  input#nameInput{
+    width:100%;
+    padding: 14px 16px;
+    border-radius: 10px;
+    border: 1.5px solid rgba(212,160,23,0.5);
+    background: rgba(244,226,184,0.06);
+    color: var(--cream);
+    font-family:'Noto Sans Malayalam', 'Anek Malayalam', sans-serif;
+    font-size: 17px;
+    outline:none;
+    text-align:center;
+    transition: border-color 0.2s, background 0.2s;
+  }
+
+  input#nameInput::placeholder{
+    color: rgba(244,226,184,0.4);
+  }
+
+  input#nameInput:focus{
+    border-color: var(--gold);
+    background: rgba(244,226,184,0.1);
+  }
+
+  .go-btn{
+    margin-top: 16px;
+    width:100%;
+    padding: 14px 16px;
+    border-radius: 10px;
+    border: none;
+    background: var(--red);
+    color: var(--cream);
+    font-family:'Anek Malayalam', 'Noto Sans Malayalam', sans-serif;
+    font-weight:700;
+    font-size: 19px;
+    letter-spacing: 0.01em;
+    cursor:pointer;
+    transition: transform 0.12s ease, background 0.2s;
+  }
+
+  .go-btn:hover{ background:#a80d24; }
+  .go-btn:active{ transform: scale(0.97); }
+
+  .error-msg{
+    color: var(--red);
+    font-size: 13px;
+    text-align:center;
+    margin-top: 10px;
+    min-height: 16px;
+  }
+
+  /* ---------- Ticket ---------- */
+  .ticket-wrap{
+    width:100%;
+    display:none;
+  }
+
+  .ticket-wrap.show{
+    display:block;
+    animation: stamp 0.55s cubic-bezier(.2,1.4,.4,1) both;
+  }
+
+  @keyframes stamp{
+    0%{ opacity:0; transform: scale(1.35) rotate(-8deg); }
+    60%{ opacity:1; transform: scale(0.96) rotate(2deg); }
+    100%{ opacity:1; transform: scale(1) rotate(-1.2deg); }
+  }
+
+  .ticket{
+    background: var(--cream);
+    color: var(--brown-ink);
+    border-radius: 14px;
+    position:relative;
+    padding: 26px 24px 22px;
+    box-shadow: 0 18px 40px rgba(0,0,0,0.45);
+  }
+
+  .ticket::before, .ticket::after{
+    content:"";
+    position:absolute;
+    width: 26px;
+    height: 26px;
+    background: var(--bg);
+    border-radius: 50%;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+  .ticket::before{ left: -13px; }
+  .ticket::after{ right: -13px; }
+
+  .perforation{
+    position:absolute;
+    left: 14px;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    border-top: 2px dashed rgba(61,42,24,0.35);
+  }
+
+  .ticket-top, .ticket-bottom{
+    position:relative;
+  }
+
+  .ticket-top{ padding-bottom: 22px; }
+  .ticket-bottom{ padding-top: 22px; }
+
+  .t-label{
+    font-size: 11px;
+    color: var(--brown-soft);
+    letter-spacing: 0.03em;
+    margin: 0 0 4px;
+  }
+
+  .t-name{
+    font-family:'Anek Malayalam', 'Noto Sans Malayalam', sans-serif;
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0 0 14px;
+    color: var(--red);
+  }
+
+  .t-row{
+    display:flex;
+    gap: 18px;
+    margin-bottom: 4px;
+  }
+
+  .t-col{ flex:1; }
+
+  .t-value{
+    font-family:'Anek Malayalam', 'Noto Sans Malayalam', sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+  }
+
+  .t-event-label{
+    font-size: 11px;
+    color: var(--brown-soft);
+    letter-spacing: 0.03em;
+    margin: 0 0 6px;
+  }
+
+  .t-event{
+    font-family:'Anek Malayalam', 'Noto Sans Malayalam', sans-serif;
+    font-size: 19px;
+    line-height: 1.5;
+    font-weight: 600;
+    color: var(--brown-ink);
+  }
+
+  .again-btn{
+    margin-top: 18px;
+    width:100%;
+    padding: 12px 16px;
+    border-radius: 10px;
+    border: 1.5px solid rgba(212,160,23,0.5);
+    background: transparent;
+    color: var(--gold);
+    font-family:'Noto Sans Malayalam', 'Anek Malayalam', sans-serif;
+    font-size: 15px;
+    cursor:pointer;
+  }
+
+  .again-btn:hover{ background: rgba(212,160,23,0.08); }
+
+  @media (prefers-reduced-motion: reduce){
+    .ticket-wrap.show{ animation:none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="stage">
+
+  <div class="marquee">
+    <p class="eyebrow">ദാസൻ്റെ ടൈം മെഷീൻ</p>
+    <h1>എല്ലാത്തിനും അതിന്റേതായ<br>സമയം ഉണ്ട് <span>ദാസാ!</span></h1>
+  </div>
+
+  <div class="ask-card" id="askCard">
+    <p class="ask-label">Know your time!</p>
+    <p class="ask-sub">നിന്റെ പേര് പറ, സമയം ഞാൻ പറയാം</p>
+    <input type="text" id="nameInput" placeholder="നിന്റെ പേര്..." autocomplete="off">
+    <button class="go-btn" id="goBtn">സമയം അറിയൂ!</button>
+    <p class="error-msg" id="errorMsg"></p>
+  </div>
+
+  <div class="ticket-wrap" id="ticketWrap">
+    <div class="ticket">
+      <div class="ticket-top">
+        <p class="t-label">ഈ ടിക്കറ്റ് ആരുടേത്</p>
+        <p class="t-name" id="outName">—</p>
+        <div class="t-row">
+          <div class="t-col">
+            <p class="t-label">തീയതി</p>
+            <p class="t-value" id="outDate">—</p>
+          </div>
+          <div class="t-col">
+            <p class="t-label">സമയം</p>
+            <p class="t-value" id="outTime">—</p>
+          </div>
+        </div>
+      </div>
+      <div class="perforation"></div>
+      <div class="ticket-bottom">
+        <p class="t-event-label">അന്ന് നിനക്ക് സംഭവിക്കാൻ പോകുന്നത്</p>
+        <p class="t-event" id="outEvent">—</p>
+      </div>
+    </div>
+    <button class="again-btn" id="againBtn">വേറൊരു സമയം നോക്കാം</button>
+  </div>
+
+</div>
+
+<script>
+  const events = [
+    "ക്രഷിനെ കണ്ടപ്പോ കൈ വീശി പഹേ, തിരിഞ്ഞ് നോക്കിയപ്പോ അത് പുറകിലെ ഒരുത്തന് ആയിരുന്നു. പണി കിട്ടി 😭",
+    "ബോസിന് അയക്കാൻ ഉള്ള മെസ്സേജ് അബദ്ധത്തിൽ ഗ്രൂപ്പിൽ വീണു, ബോസ് അതിലുണ്ട് ഡാ. ഇനി ജോലി ഉണ്ടാവോ ആവോ 💀",
+    "ആഴ്ച വച്ചിരുന്ന ബിരിയാണി ചൂടാക്കാൻ എടുത്തപ്പോ പൂപ്പൽ, ഇന്നലെ വരെ ഹീറോ ആയിരുന്നു അത്",
+    "ശമ്പളം വീണ അതേ സെക്കൻ്റിൽ ബൈക്ക് സർവീസിന് മൊത്തം പോയി. അക്കൗണ്ട് ബാലൻസ് പൂജ്യം, ജീവിതം ഒരു തമാശ",
+    "ഇൻ്റർവ്യൂന് പോണ വഴിക്ക് ഷർട്ടിൽ ചായ വീണു, തിരിച്ചു പോകാൻ നേരല്ല, അതിലേ കേറി പോയി 😅",
+    "ചാർജ് 1% ആയപ്പോ ജീവിതത്തിലെ ഏറ്റവും വല്യ കോൾ വന്നു, ഓഫായി. ഇനി തിരിച്ചു വിളിക്കാൻ ധൈര്യം ഇല്ല",
+    "കണ്ണാടി നോക്കിയപ്പോ ആദ്യത്തെ നര മുടി, അതും ബർത്ത്ഡേക്ക് തന്നെ. കാലം ആരെയും വെറുതെ വിടില്ല മോനെ",
+    "ഡയറ്റ് തുടങ്ങാൻ വച്ച ദിവസം തന്നെ അമ്മ ബീഫ് ഉലർത്തിയത് വച്ചു. ഡയറ്റ് നാളെ, എന്നും നാളെ",
+    "രണ്ട് കൊല്ലം കഴിഞ്ഞ് ഒരു 'ചങ്ങായി' വിളിച്ചു, ലോൺ ചോദിക്കാൻ ആയിരുന്നു. ഊഹിച്ചത് ശരി, എപ്പോഴും ശരി",
+    "കുട എടുക്കാതെ ഇറങ്ങിയ ഒരേ ഒരു ദിവസം മഴ കോരിച്ചൊരിഞ്ഞു. ബാഗ് മൊത്തം കുളമായി 🌧️",
+    "സിനിമേടെ ക്ലൈമാക്സ് സീനിൽ കറൻ്റ് പോയി, തിയേറ്ററില്ല കേട്ടോ, സ്വന്തം വീട്ടിൽ തന്നെ. ടൈമിംഗ് കിടിലൻ",
+    "ഓൺലൈനിൽ ഓർഡർ ചെയ്ത ഷൂസ് വന്നു, രണ്ടും വലത് കാലിന്. ഇനി ഇടത് കാലിന് വേറെ ഓർഡർ ഇടണം",
+    "ട്രെയിനിൽ സീറ്റ് കിട്ടി, സന്തോഷിച്ച് ഇരുന്നതാ, അടുത്തിരുന്നയാൾ മുഴുവൻ ട്രിപ്പും സ്പീക്കറിൽ പാട്ട് വച്ചു",
+    "ശമ്പളം അക്കൗണ്ടിൽ വീണ അതേ നിമിഷം EMI പോയി. കണ്ട് കണ്ടിരിക്കെ പൈസ ഇല്ലാണ്ടായി",
+    "'അർജൻ്റ് മീറ്റിംഗ്' ന്ന് പറഞ്ഞ് വിളിച്ചു, ഒരു മണിക്കൂർ ഇരുന്നു. അജണ്ട എന്താന്ന് ദൈവത്തിന് മാത്രേ അറിയൂ",
+    "WhatsApp-ൽ 'ടൈപ്പിംഗ്...' കണ്ട് അഞ്ച് മിനിറ്റ് കാത്തു, കിട്ടിയത് ഒരു 😂 മാത്രം. ഇത്രേം ഉള്ളൂ വിലയോ",
+    "മുടി വെട്ടിച്ച പിറ്റേന്നാ ഓർമ്മ വന്നത്, ഫോട്ടോഷൂട്ട് ഇന്നലെ ആയിരുന്നു. കൃത്യം ഒരു ദിവസം ലേറ്റ്, എപ്പോഴും ലേറ്റ്",
+    "ഓട്ടോ പിടിച്ചപ്പോ മീറ്റർ ഇട്ടില്ല, ഇറങ്ങിയപ്പോ ചോദിച്ച തുക കേട്ട് ശ്വാസം നിന്നു. ഇത് കൊള്ളയല്ലേ പഹേ",
+    "ലോട്ടറി ടിക്കറ്റ് എടുക്കാൻ തോന്നി, മടി കാരണം എടുത്തില്ല. ആ നമ്പർ അടിച്ചു. അതെ, അത് തന്നെ, എപ്പോഴും അങ്ങനെ",
+    "പഴയ ഫോട്ടോ കണ്ട് ചിരിച്ച് സ്റ്റാറ്റസ് വച്ചു, അഞ്ച് മിനിറ്റിനുള്ളിൽ ആ ആള് തന്നെ കാൾ ചെയ്തു. ലോകം ചെറുതാ മോനെ 👀"
+  ];
+
+  function pad(n){ return n.toString().padStart(2, '0'); }
+
+  function randomDateTime(){
+    const now = new Date();
+    const daysAhead = Math.floor(Math.random() * 300) - 30; // some past, mostly future
+    const future = new Date(now.getTime() + daysAhead * 24 * 60 * 60 * 1000);
+
+    const malMonths = ["ജനുവരി","ഫെബ്രുവരി","മാർച്ച്","ഏപ്രിൽ","മെയ്","ജൂൺ","ജൂലൈ","ഓഗസ്റ്റ്","സെപ്റ്റംബർ","ഒക്ടോബർ","നവംബർ","ഡിസംബർ"];
+    const dateStr = `${future.getDate()} ${malMonths[future.getMonth()]} ${future.getFullYear()}`;
+
+    let hour = Math.floor(Math.random() * 24);
+    const minute = Math.floor(Math.random() * 60);
+    const ampm = hour >= 12 ? "PM" : "AM";
+    let hour12 = hour % 12;
+    if (hour12 === 0) hour12 = 12;
+    const timeStr = `${pad(hour12)}:${pad(minute)} ${ampm}`;
+
+    return { dateStr, timeStr };
+  }
+
+  function revealTicket(){
+    const nameVal = document.getElementById('nameInput').value.trim();
+    const errorMsg = document.getElementById('errorMsg');
+
+    if (!nameVal){
+      errorMsg.textContent = "പേര് ഇടാതെ എങ്ങനെ അറിയും ദാസാ!";
+      return;
+    }
+    errorMsg.textContent = "";
+
+    const { dateStr, timeStr } = randomDateTime();
+    const event = events[Math.floor(Math.random() * events.length)];
+
+    document.getElementById('outName').textContent = nameVal;
+    document.getElementById('outDate').textContent = dateStr;
+    document.getElementById('outTime').textContent = timeStr;
+    document.getElementById('outEvent').textContent = event;
+
+    const wrap = document.getElementById('ticketWrap');
+    wrap.classList.remove('show');
+    void wrap.offsetWidth; // restart animation
+    wrap.classList.add('show');
+
+    wrap.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  document.getElementById('goBtn').addEventListener('click', revealTicket);
+  document.getElementById('nameInput').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') revealTicket();
+  });
+  document.getElementById('againBtn').addEventListener('click', revealTicket);
+</script>
 
 </body>
 </html>
+
