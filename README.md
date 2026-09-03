@@ -2,32 +2,31 @@
 
 
 
-# [Project Name] 🎯
+# GIKA GIKA FUN
 
 
 ## Basic Details
-### Team Name: [Name]
+### Team Name: ELI FENS
 
 
 ### Team Members
-- Team Lead: [Name] - [College]
-- Member 2: [Name] - [College]
-- Member 3: [Name] - [College]
+- Member 1: Hadhi Gibril - Model Engineering College, Thrikkakara
+- Member 3: Kashinadhan V H - Model Engineering College, Thrikkakara
 
 ### Project Description
-[2-3 lines about what your project does]
+Brings malyalam proverbs to life.The childhood you heard is given to you to experience.
 
 ### The Problem (that doesn't exist)
-[What ridiculous problem are you solving?]
+We're the problem.
 
 ### The Solution (that nobody asked for)
-[How are you solving it? Keep it fun!]
+We're not solving the problem, the problem itslef is the solution.
 
 ## Technical Details
 ### Technologies/Components Used
 For Software:
-- [Languages used]
-- [Frameworks used]
+- HTML
+- No frameworks used.
 - [Libraries used]
 - [Tools used]
 
