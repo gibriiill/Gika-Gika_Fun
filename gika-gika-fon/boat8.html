@@ -1,20 +1,329 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="ml">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Boat 8 — North Anchor</title>
-<meta name="description" content="The oldest mooring in the bay, still holding steady after all these years.">
-<link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>മത്തൻ കുത്തിയാൽ കുമ്പളം മുളക്കില്ല</title>
+<meta name="description" content="വിത്ത് നടൂ, നനയ്ക്കൂ, എന്ത് നട്ടോ അത് തന്നെ മുളയ്ക്കുന്നത് കാണൂ.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Malayalam:wght@400;500;600;700&family=Baloo+2:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --sky-top:#bfe6f5;
+    --sky-low:#eaf7df;
+    --sun:#ffe28a;
+    --hill-far:#8fbf7a;
+    --hill-near:#5f9455;
+    --grass-hi:#8fc86b;
+    --grass-lo:#4f8a41;
+    --soil-dry:#7a5230;
+    --soil-dry-dark:#5e3e22;
+    --soil-wet:#4d3520;
+    --soil-wet-dark:#38271a;
+    --seed:#4a2f18;
+    --stem:#3d7d3d;
+    --leaf:#4c9a4c;
+    --leaf-dark:#356b35;
+    --flower:#ffd23f;
+    --flower-ctr:#e8952a;
+    --pumpkin:#e8792a;
+    --pumpkin-dark:#c05f1c;
+    --pumpkin-stem:#5a7a34;
+    --wood:#8a5a34;
+    --ink:#2b241a;
+    --cream:#fffaf0;
+    --plant-btn:#6b8f3f;
+    --water-btn:#3f7fa8;
+  }
+  *{box-sizing:border-box;}
+  html,body{
+    margin:0;padding:0;width:100%;height:100%;overflow:hidden;
+    background:var(--sky-top);
+    font-family:'Noto Sans Malayalam','Baloo 2',sans-serif;
+  }
+  #stage{position:relative;width:100vw;height:100vh;min-height:580px;}
+  svg#scene{position:absolute;inset:0;width:100%;height:100%;display:block;}
+
+  .title-wrap{
+    position:absolute;top:clamp(16px,4vh,40px);left:0;right:0;
+    text-align:center;padding:0 20px;pointer-events:none;z-index:5;
+  }
+  h1{
+    margin:0;font-weight:700;
+    font-size:clamp(1.05rem,3.1vw,1.9rem);
+    line-height:1.35;color:var(--ink);
+    text-shadow:0 1px 0 rgba(255,255,255,.35);
+    max-width:20ch;margin:0 auto;
+  }
+  .sub{
+    margin-top:8px;font-family:'Baloo 2',sans-serif;font-weight:500;
+    font-size:clamp(.8rem,1.5vw,1rem);color:#3d3320;opacity:.8;
+  }
+
+  .controls{
+    position:absolute;left:50%;bottom:clamp(26px,6vh,46px);
+    transform:translateX(-50%);z-index:6;
+    display:flex;gap:12px;flex-wrap:wrap;justify-content:center;
+    padding:0 16px;
+  }
+  .controls button{
+    font-family:'Baloo 2',sans-serif;font-weight:600;
+    font-size:clamp(.85rem,1.7vw,1rem);
+    color:var(--cream);border:none;border-radius:999px;
+    padding:12px 24px;cursor:pointer;
+    box-shadow:0 6px 18px rgba(0,0,0,.18);
+    transition:transform .15s ease, box-shadow .15s ease, opacity .2s;
+  }
+  .controls button:disabled{opacity:.4;cursor:not-allowed;box-shadow:none;transform:none;}
+  .controls button:not(:disabled):hover{transform:translateY(-2px);box-shadow:0 9px 22px rgba(0,0,0,.22);}
+  .controls button:focus-visible{outline:3px solid var(--ink);outline-offset:2px;}
+  #btnPlant{background:var(--plant-btn);}
+  #btnWater{background:var(--water-btn);}
+
+  /* soil color changes when watered */
+  #soilFill{transition:fill 1s ease;}
+  .stage.watered #soilFill{fill:var(--soil-wet);}
+
+  /* seed mound */
+  #seedGroup{opacity:0;transform:translateY(6px) scale(.7);transform-origin:600px 560px;
+    transition:opacity .4s ease, transform .4s cubic-bezier(.34,1.56,.64,1);}
+  .stage.planted #seedGroup{opacity:1;transform:translateY(0) scale(1);}
+  .stage.has-sprout #seedGroup{opacity:0;}
+
+  /* watering can */
+  #canGroup{opacity:0;transform:translate(-40px,-30px) rotate(0deg);
+    transition:opacity .3s ease, transform .3s ease;}
+  .stage.watering #canGroup{opacity:1;transform:translate(0,-70px) rotate(-28deg);}
+  #dropStream{opacity:0;}
+  .stage.watering #dropStream{opacity:1;animation:drip .4s linear infinite;}
+  @keyframes drip{0%{stroke-dashoffset:0;}100%{stroke-dashoffset:14;}}
+
+  .grow-part{opacity:0;transform:scale(.35);transform-origin:600px 560px;
+    transition:opacity .5s ease, transform .6s cubic-bezier(.34,1.56,.64,1);}
+  .stage.has-sprout #sproutPart{opacity:1;transform:scale(1);}
+  .stage.has-vine #vinePart{opacity:1;transform:scale(1);}
+  .stage.has-flower #flowerPart{opacity:1;transform:scale(1);}
+  .stage.has-pumpkin #flowerPart{opacity:0;transform:scale(.6);}
+  .stage.has-pumpkin #pumpkinPart{opacity:1;transform:scale(1);}
+
+  #vinePart, #sproutPart{
+    animation:sway 3.4s ease-in-out infinite;
+    transform-origin:600px 560px;
+  }
+  @keyframes sway{
+    0%,100%{ margin-left:0; }
+  }
+  .stage.has-vine #vinePart, .stage.has-sprout #sproutPart{
+    animation:none;
+  }
+  .stage.has-vine #vinePart{
+    animation:swayVine 3.2s ease-in-out infinite;
+  }
+  @keyframes swayVine{
+    0%,100%{transform:scale(1) rotate(0deg);}
+    50%{transform:scale(1) rotate(1.4deg);}
+  }
+
+  .caption{
+    position:absolute;left:50%;top:clamp(96px,20vh,150px);
+    transform:translate(-50%,-8px);z-index:6;text-align:center;
+    opacity:0;pointer-events:none;width:min(92vw,560px);
+    transition:opacity .6s ease, transform .6s ease;
+  }
+  .stage.grown .caption{opacity:1;transform:translate(-50%,0);pointer-events:auto;}
+  .caption p{margin:0 0 6px;font-weight:700;
+    font-size:clamp(1.05rem,2.6vw,1.55rem);color:var(--ink);}
+  .caption p.small{font-weight:500;font-size:clamp(.82rem,1.7vw,.98rem);color:#4a3e28;}
+  button#again{
+    margin-top:14px;font-family:'Baloo 2',sans-serif;font-weight:600;
+    font-size:clamp(.85rem,1.8vw,1rem);color:var(--cream);
+    background:var(--ink);border:none;padding:10px 24px;border-radius:999px;
+    cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.25);
+    transition:transform .15s ease;
+  }
+  button#again:hover{transform:translateY(-2px);}
+
+  @media (prefers-reduced-motion: reduce){
+    #seedGroup,#canGroup,.grow-part,#vinePart,#sproutPart,.caption{
+      transition:none !important;animation:none !important;
+    }
+  }
+</style>
 </head>
-<body class="page-boat" style="background: linear-gradient(160deg, #1f4e49 0%, #122e2b 100%);">
+<body>
+<div id="stage" class="stage idle">
+  <div class="title-wrap">
+    <h1>മത്തൻ കുത്തിയാൽ കുമ്പളം മുളക്കില്ല</h1>
+    <div class="sub">വിത്ത് നടൂ, നനയ്ക്കൂ — എന്ത് നടുന്നോ അതേ മുളയ്ക്കൂ</div>
+  </div>
 
-<section class="boat-hero">
-  <img class="big-head" src="head1.png" alt="Rower of boat 8">
-  <h1>Boat 8: North Anchor</h1>
-  <p>The oldest mooring in the bay, still holding steady after all these years.</p>
-  <a class="back-link" href="index.html">&larr; Back to the harbor</a>
-</section>
+  <svg id="scene" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="var(--sky-top)"/>
+        <stop offset="100%" stop-color="var(--sky-low)"/>
+      </linearGradient>
+      <linearGradient id="grassGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="var(--grass-hi)"/>
+        <stop offset="100%" stop-color="var(--grass-lo)"/>
+      </linearGradient>
+      <radialGradient id="sunGlow" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#fff3c4" stop-opacity="0.9"/>
+        <stop offset="100%" stop-color="#fff3c4" stop-opacity="0"/>
+      </radialGradient>
+    </defs>
 
+    <rect x="0" y="0" width="1200" height="700" fill="url(#skyGrad)"/>
+    <circle cx="1010" cy="120" r="130" fill="url(#sunGlow)"/>
+    <circle cx="1010" cy="120" r="44" fill="#ffe9a8"/>
+
+    <!-- distant hills -->
+    <path d="M0,430 Q200,370 420,420 Q650,460 900,400 Q1050,370 1200,410 L1200,700 L0,700 Z" fill="var(--hill-far)" opacity="0.55"/>
+    <path d="M0,470 Q220,420 460,460 Q680,495 940,440 Q1080,415 1200,450 L1200,700 L0,700 Z" fill="var(--hill-near)" opacity="0.7"/>
+
+    <!-- field -->
+    <rect x="0" y="470" width="1200" height="230" fill="url(#grassGrad)"/>
+    <g opacity="0.25" stroke="#3f6e33" stroke-width="3">
+      <path d="M0,510 Q600,495 1200,510"/>
+      <path d="M0,555 Q600,540 1200,555"/>
+      <path d="M0,600 Q600,585 1200,600"/>
+    </g>
+
+    <!-- soil patch -->
+    <g id="soilPatch">
+      <ellipse id="soilFill" cx="600" cy="575" rx="150" ry="46" fill="var(--soil-dry)"/>
+      <g opacity="0.35" stroke="var(--soil-dry-dark)" stroke-width="4" fill="none">
+        <path d="M470,565 Q600,555 730,565"/>
+        <path d="M465,580 Q600,572 735,580"/>
+        <path d="M475,594 Q600,588 725,594"/>
+      </g>
+    </g>
+
+    <!-- seed mound -->
+    <g id="seedGroup">
+      <ellipse cx="600" cy="572" rx="26" ry="10" fill="var(--soil-dry-dark)"/>
+      <ellipse cx="600" cy="566" rx="9" ry="6" fill="var(--seed)"/>
+    </g>
+
+    <!-- watering can -->
+    <g id="canGroup">
+      <g transform="translate(430,470)">
+        <rect x="0" y="0" width="70" height="42" rx="10" fill="#4f7ba3"/>
+        <rect x="55" y="-14" width="46" height="14" rx="7" fill="#4f7ba3" transform="rotate(20 55 -14)"/>
+        <path d="M-6,10 Q-26,4 -30,20" stroke="#4f7ba3" stroke-width="10" fill="none" stroke-linecap="round"/>
+        <line id="dropStream" x1="98" y1="0" x2="112" y2="40" stroke="#8fd0f0" stroke-width="5" stroke-linecap="round" stroke-dasharray="7 6"/>
+      </g>
+    </g>
+
+    <!-- growing plant -->
+    <g id="plantGroup">
+      <g id="sproutPart" class="grow-part">
+        <path d="M600,572 L600,536" stroke="var(--stem)" stroke-width="7" stroke-linecap="round"/>
+        <path d="M600,548 Q580,540 574,522" stroke="var(--leaf)" stroke-width="9" fill="none" stroke-linecap="round"/>
+        <path d="M600,548 Q620,540 626,522" stroke="var(--leaf)" stroke-width="9" fill="none" stroke-linecap="round"/>
+      </g>
+
+      <g id="vinePart" class="grow-part">
+        <path d="M600,572 Q596,500 610,460 Q622,428 604,398" stroke="var(--stem)" stroke-width="9" fill="none" stroke-linecap="round"/>
+        <path d="M602,520 Q566,512 552,486" stroke="var(--leaf)" stroke-width="12" fill="none" stroke-linecap="round"/>
+        <ellipse cx="548" cy="480" rx="20" ry="15" fill="var(--leaf)" transform="rotate(-20 548 480)"/>
+        <path d="M606,470 Q646,458 660,430" stroke="var(--leaf-dark)" stroke-width="12" fill="none" stroke-linecap="round"/>
+        <ellipse cx="664" cy="424" rx="20" ry="15" fill="var(--leaf-dark)" transform="rotate(18 664 424)"/>
+        <path d="M600,428 Q568,418 558,398" stroke="var(--leaf)" stroke-width="11" fill="none" stroke-linecap="round"/>
+        <ellipse cx="553" cy="392" rx="17" ry="13" fill="var(--leaf)" transform="rotate(-16 553 392)"/>
+        <path d="M608,400 Q596,378 610,358" stroke="var(--stem)" stroke-width="6" fill="none" stroke-linecap="round"/>
+      </g>
+
+      <g id="flowerPart" class="grow-part">
+        <g transform="translate(610,352)">
+          <circle r="8" fill="var(--flower-ctr)"/>
+          <ellipse rx="10" ry="6" fill="var(--flower)" transform="rotate(0)"/>
+          <ellipse rx="10" ry="6" fill="var(--flower)" transform="rotate(72)"/>
+          <ellipse rx="10" ry="6" fill="var(--flower)" transform="rotate(144)"/>
+          <ellipse rx="10" ry="6" fill="var(--flower)" transform="rotate(216)"/>
+          <ellipse rx="10" ry="6" fill="var(--flower)" transform="rotate(288)"/>
+        </g>
+      </g>
+
+      <g id="pumpkinPart" class="grow-part" transform-origin="620 545">
+        <ellipse cx="620" cy="580" rx="66" ry="20" fill="#000" opacity="0.12"/>
+        <ellipse cx="620" cy="548" rx="62" ry="46" fill="var(--pumpkin)"/>
+        <path d="M580,510 Q620,494 660,510 Q676,548 660,586 Q620,602 580,586 Q564,548 580,510 Z" fill="var(--pumpkin)"/>
+        <g stroke="var(--pumpkin-dark)" stroke-width="4" fill="none" opacity="0.65">
+          <path d="M600,500 Q590,548 600,596"/>
+          <path d="M620,496 Q616,548 620,600"/>
+          <path d="M640,500 Q650,548 640,596"/>
+        </g>
+        <path d="M620,498 Q616,478 626,466" stroke="var(--pumpkin-stem)" stroke-width="10" fill="none" stroke-linecap="round"/>
+        <ellipse cx="628" cy="464" rx="10" ry="7" fill="var(--pumpkin-stem)"/>
+      </g>
+    </g>
+  </svg>
+
+  <div class="caption">
+    <p>മത്തൻ കുത്തിയാൽ കുമ്പളം മുളക്കില്ല</p>
+    <p class="small">നട്ട വിത്തേതോ, ഫലം അതു തന്നെ.</p>
+    <button id="again">വീണ്ടും നടാം</button>
+  </div>
+
+  <div class="controls">
+    <button id="btnPlant">വിത്ത് നടൂ</button>
+    <button id="btnWater" disabled>നനയ്ക്കൂ</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  const stage = document.getElementById('stage');
+  const btnPlant = document.getElementById('btnPlant');
+  const btnWater = document.getElementById('btnWater');
+  const again = document.getElementById('again');
+  let timers = [];
+
+  function clearTimers(){
+    timers.forEach(t => clearTimeout(t));
+    timers = [];
+  }
+
+  function plant(){
+    if(!stage.classList.contains('idle')) return;
+    stage.classList.remove('idle');
+    stage.classList.add('planted');
+    btnPlant.disabled = true;
+    btnWater.disabled = false;
+  }
+
+  function water(){
+    if(!stage.classList.contains('planted')) return;
+    stage.classList.remove('planted');
+    btnWater.disabled = true;
+    stage.classList.add('watered');
+    stage.classList.add('watering');
+
+    timers.push(setTimeout(() => {
+      stage.classList.remove('watering');
+    }, 900));
+
+    timers.push(setTimeout(() => stage.classList.add('has-sprout'), 750));
+    timers.push(setTimeout(() => stage.classList.add('has-vine'), 1900));
+    timers.push(setTimeout(() => stage.classList.add('has-flower'), 3000));
+    timers.push(setTimeout(() => stage.classList.add('has-pumpkin'), 4000));
+    timers.push(setTimeout(() => stage.classList.add('grown'), 4900));
+  }
+
+  function reset(){
+    clearTimers();
+    stage.className = 'stage idle';
+    btnPlant.disabled = false;
+    btnWater.disabled = true;
+  }
+
+  btnPlant.addEventListener('click', plant);
+  btnWater.addEventListener('click', water);
+  again.addEventListener('click', reset);
+})();
+</script>
 </body>
 </html>
+
