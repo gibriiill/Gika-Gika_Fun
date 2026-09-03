@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="ml">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+<title>അടിച്ചാൽ ആനയും വീഴും!</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+Chettan+2:wght@500;700;800&family=Manjari:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --sky-top:#8fd3f4;
+    --sky-bottom:#e9f7d8;
+    --ground:#6a9c46;
+    --ground-dark:#547c37;
+    --wood:#7a4a24;
+    --wood-dark:#5a3418;
+    --rope:#c9a15a;
+    --rope-dark:#9a7638;
+    --flag-red:#c1272d;
+    --flag-gold:#e8b923;
+    --flag-green:#2f7a3e;
+    --flag-white:#fdf6e3;
+    --ink:#3a2416;
+    --panel:#fff8e7;
+  }
+  *{box-sizing:border-box;}
+  html,body{
+    margin:0;padding:0;height:100%;overflow:hidden;
+    font-family:'Manjari','Noto Sans Malayalam',sans-serif;
+    color:var(--ink);
+    -webkit-tap-highlight-color:transparent;
+    user-select:none;
+  }
+  body{
+    background:linear-gradient(to bottom, var(--sky-top) 0%, var(--sky-bottom) 60%, var(--ground) 60%, var(--ground-dark) 100%);
+    display:flex;flex-direction:column;align-items:center;
+    height:100vh;width:100vw;position:relative;
+  }
+
+  /* ---------- Bunting ---------- */
+  .bunting{position:absolute;top:0;left:0;width:100%;height:50px;display:flex;justify-content:space-evenly;pointer-events:none;z-index:5;}
+  .bunting span{
+    width:0;height:0;
+    border-left:17px solid transparent;
+    border-right:17px solid transparent;
+    border-top:30px solid var(--flag-red);
+    margin-top:-2px;
+    animation:sway 2.6s ease-in-out infinite;
+    transform-origin:top center;
+  }
+  .bunting span:nth-child(3n+2){border-top-color:var(--flag-gold);animation-delay:.3s;}
+  .bunting span:nth-child(3n){border-top-color:var(--flag-green);animation-delay:.6s;}
+  @keyframes sway{
+    0%,100%{transform:rotate(-6deg);}
+    50%{transform:rotate(6deg);}
+  }
+
+  /* ---------- Title ---------- */
+  .title-board{
+    margin-top:56px;
+    background:var(--wood);
+    border:6px solid var(--wood-dark);
+    border-radius:12px;
+    padding:12px 32px;
+    box-shadow:0 7px 0 var(--wood-dark), 0 10px 18px rgba(0,0,0,.25);
+    z-index:6;
+  }
+  .title-board h1{
+    margin:0;
+    font-family:'Baloo Chettan 2',sans-serif;
+    font-weight:800;
+    font-size:clamp(26px,5.6vw,46px);
+    color:var(--flag-white);
+    letter-spacing:.5px;
+    text-shadow:2px 2px 0 var(--wood-dark);
+    text-align:center;
+  }
+  .subtitle{
+    margin-top:10px;
+    font-size:clamp(15px,2.8vw,20px);
+    font-weight:700;
+    color:var(--ink);
+    text-align:center;
+    max-width:680px;
+    padding:0 16px;
+    z-index:6;
+    line-height:1.6;
+  }
+
+  /* ---------- Stage ---------- */
+  .stage{
+    position:relative;
+    flex:1;
+    width:100%;
+    max-width:960px;
+  }
+
+  .pole{
+    position:absolute;
+    top:32%;
+    width:20px;
+    height:260px;
+    background:linear-gradient(to right, var(--wood-dark), var(--wood) 40%, var(--wood-dark));
+    border-radius:5px;
+    box-shadow:0 4px 6px rgba(0,0,0,.25);
+  }
+  .pole.left{left:5%;}
+  .pole.right{right:5%;}
+  .pole::before{
+    content:"";
+    position:absolute;top:-12px;left:-7px;
+    width:34px;height:24px;
+    background:var(--wood-dark);
+    border-radius:8px 8px 3px 3px;
+  }
+
+  .rope{
+    position:absolute;
+    top:calc(32% + 8px);
+    left:5%;
+    right:5%;
+    height:8px;
+    background:repeating-linear-gradient(90deg, var(--rope), var(--rope) 12px, var(--rope-dark) 12px, var(--rope-dark) 15px);
+    border-radius:4px;
+    box-shadow:0 3px 5px rgba(0,0,0,.2);
+    z-index:3;
+  }
+
+  .zone{
+    position:absolute;
+    top:calc(32% - 26px);
+    left:38%;
+    width:24%;
+    height:90px;
+    z-index:2;
+  }
+  .zone-glow{
+    position:absolute;
+    inset:0;
+    background:radial-gradient(ellipse at center, rgba(232,185,35,.6) 0%, rgba(232,185,35,0) 70%);
+    animation:pulse 1.4s ease-in-out infinite;
+  }
+  @keyframes pulse{
+    0%,100%{opacity:.5;transform:scale(1);}
+    50%{opacity:1;transform:scale(1.12);}
+  }
+  .zone-flag{
+    position:absolute;
+    top:0;left:50%;
+    transform:translateX(-50%);
+    font-size:30px;
+    animation:flagwave 1s ease-in-out infinite;
+  }
+  @keyframes flagwave{
+    0%,100%{transform:translateX(-50%) rotate(-8deg);}
+    50%{transform:translateX(-50%) rotate(8deg);}
+  }
+  .zone-label{
+    position:absolute;
+    top:52px;left:50%;
+    transform:translateX(-50%);
+    font-size:14px;
+    font-weight:700;
+    color:var(--flag-red);
+    white-space:nowrap;
+  }
+
+  .rider{
+    position:absolute;
+    top:calc(32% - 96px);
+    left:5%;
+    transform:translateX(0);
+    z-index:4;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    line-height:1;
+    cursor:pointer;
+    filter:drop-shadow(0 5px 4px rgba(0,0,0,.25));
+    padding:14px;
+    margin:-14px;
+    touch-action:manipulation;
+  }
+  .rider .elephant{
+    font-size:96px;
+    animation:bob 0.5s ease-in-out infinite;
+  }
+  .rider .bicycle{
+    font-size:52px;
+    margin-top:-16px;
+  }
+  @keyframes bob{
+    0%,100%{transform:translateY(0) rotate(-2deg);}
+    50%{transform:translateY(-6px) rotate(2deg);}
+  }
+  .rider.falling{
+    animation:fall 1.1s cubic-bezier(.55,0,.85,.35) forwards;
+  }
+  @keyframes fall{
+    0%{transform:translateY(0) rotate(0deg);opacity:1;}
+    30%{transform:translateY(14px) rotate(35deg);opacity:1;}
+    100%{transform:translateY(260px) rotate(190deg);opacity:0;}
+  }
+  .rider.ready::after{
+    content:"";
+    position:absolute;
+    inset:-6px;
+    border-radius:50%;
+    box-shadow:0 0 0 4px rgba(232,185,35,.85);
+    animation:readypulse .7s ease-in-out infinite;
+  }
+  @keyframes readypulse{
+    0%,100%{opacity:.4;transform:scale(.9);}
+    50%{opacity:1;transform:scale(1.06);}
+  }
+
+  .dust{
+    position:absolute;
+    font-size:44px;
+    opacity:0;
+    z-index:4;
+    pointer-events:none;
+  }
+  .dust.show{
+    animation:dustpuff .6s ease-out forwards;
+  }
+  @keyframes dustpuff{
+    0%{opacity:0;transform:translateY(0) scale(.4);}
+    30%{opacity:1;}
+    100%{opacity:0;transform:translateY(-30px) scale(1.7);}
+  }
+
+  .banner{
+    position:absolute;
+    top:20%;
+    left:50%;
+    transform:translate(-50%,-50%) scale(.6);
+    background:var(--flag-red);
+    color:var(--flag-white);
+    font-family:'Baloo Chettan 2',sans-serif;
+    font-weight:800;
+    font-size:clamp(24px,5vw,42px);
+    padding:18px 32px;
+    border-radius:14px;
+    border:5px solid var(--flag-gold);
+    box-shadow:0 10px 22px rgba(0,0,0,.3);
+    z-index:10;
+    opacity:0;
+    pointer-events:none;
+    text-align:center;
+    white-space:nowrap;
+  }
+  .banner.show{
+    animation:pop 1.8s ease-out forwards;
+  }
+  .banner.miss{
+    background:var(--wood-dark);
+    border-color:var(--rope);
+  }
+  @keyframes pop{
+    0%{opacity:0;transform:translate(-50%,-50%) scale(.5);}
+    15%{opacity:1;transform:translate(-50%,-50%) scale(1.1);}
+    25%{transform:translate(-50%,-50%) scale(1);}
+    80%{opacity:1;}
+    100%{opacity:0;transform:translate(-50%,-60%) scale(1);}
+  }
+
+  /* ---------- Score panel (no button — tap the elephant itself) ---------- */
+  .panel{
+    width:100%;
+    max-width:960px;
+    background:var(--panel);
+    border-top:6px solid var(--wood-dark);
+    box-shadow:0 -6px 14px rgba(0,0,0,.15);
+    padding:16px 22px 22px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:40px;
+    z-index:6;
+  }
+  .score-box{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:4px;
+    font-size:16px;
+    font-weight:700;
+  }
+  .score-box .num{
+    font-family:'Baloo Chettan 2',sans-serif;
+    font-size:38px;
+    color:var(--flag-red);
+    line-height:1;
+  }
+  .tries-box .num{
+    color:var(--wood);
+  }
+  .hint{
+    font-size:14px;
+    font-weight:700;
+    opacity:.7;
+    display:flex;
+    align-items:center;
+    gap:6px;
+  }
+  .hint .pointer-icon{font-size:22px;}
+
+  @media (max-width:520px){
+    .panel{gap:26px;flex-wrap:wrap;}
+    .hint{width:100%;justify-content:center;order:3;}
+  }
+
+  .sr-only{
+    position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+    clip:rect(0,0,0,0);white-space:nowrap;border:0;
+  }
+
+  /* ---------- pointer tracking reticle ---------- */
+  .stage{ cursor:none; }
+  .reticle{
+    position:fixed;
+    top:0;left:0;
+    width:54px;height:54px;
+    margin-left:-27px;
+    margin-top:-27px;
+    pointer-events:none;
+    z-index:20;
+    opacity:0;
+    transform:translate(-100px,-100px) scale(1);
+    transition:opacity .15s ease;
+  }
+  .reticle svg{ width:100%; height:100%; display:block; }
+  .reticle.visible{ opacity:1; }
+  .reticle.locked svg circle.ring{
+    stroke:var(--flag-gold);
+    stroke-width:5;
+  }
+  .reticle.locked svg circle.dot{
+    fill:var(--flag-gold);
+  }
+  .reticle.locked{
+    animation:reticleLock .35s ease;
+  }
+  @keyframes reticleLock{
+    0%{transform:translate(-100px,-100px) scale(1.7);}
+    100%{transform:translate(-100px,-100px) scale(1);}
+  }
+</style>
+</head>
+<body>
+
+  <div class="bunting" aria-hidden="true">
+    <span></span><span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span><span></span><span></span>
+    <span></span><span></span><span></span>
+  </div>
+
+  <div class="title-board">
+    <h1>അടിച്ചാൽ ആനയും വീഴും!</h1>
+  </div>
+  <p class="subtitle">കയറിന് മുകളിലൂടെ ആന സൈക്കിൾ ചവിട്ടി പോയി വരുന്നു. ചൂണ്ടുപലക ആനയെ പിന്തുടരും — അത് സ്വർണ്ണനിറമായി പൂട്ടുമ്പോൾ ഞെക്കൂ, ആന വീഴും!</p>
+
+  <div class="stage" id="stage">
+    <div class="pole left"></div>
+    <div class="pole right"></div>
+    <div class="rope"></div>
+
+    <div class="rider" id="rider" title="ആനയെ ഞെക്കൂ">
+      <div class="elephant" id="elephantEmoji">🐘</div>
+      <div class="bicycle">🚲</div>
+    </div>
+
+    <div class="dust" id="dust">💨</div>
+
+    <div class="banner" id="banner"></div>
+  </div>
+
+  <div class="panel">
+    <div class="score-box">
+      <span>അടികൾ</span>
+      <span class="num" id="hitCount">0</span>
+    </div>
+    <div class="score-box tries-box">
+      <span>ശ്രമങ്ങൾ</span>
+      <span class="num" id="tryCount">0</span>
+    </div>
+    <div class="hint"><span class="pointer-icon">🎯</span> ആനയെ ലക്ഷ്യമിട്ട് ഞെക്കൂ · അനന്തമായി കളിക്കാം</div>
+  </div>
+
+  <span class="sr-only" id="liveRegion" aria-live="polite"></span>
+
+  <div class="reticle" id="reticle" aria-hidden="true">
+    <svg viewBox="0 0 54 54">
+      <circle class="ring" cx="27" cy="27" r="20" fill="none" stroke="#c1272d" stroke-width="4"></circle>
+      <line x1="27" y1="2" x2="27" y2="14" stroke="#c1272d" stroke-width="4"></line>
+      <line x1="27" y1="40" x2="27" y2="52" stroke="#c1272d" stroke-width="4"></line>
+      <line x1="2" y1="27" x2="14" y2="27" stroke="#c1272d" stroke-width="4"></line>
+      <line x1="40" y1="27" x2="52" y2="27" stroke="#c1272d" stroke-width="4"></line>
+      <circle class="dot" cx="27" cy="27" r="4" fill="#c1272d"></circle>
+    </svg>
+  </div>
+
+<script>
+(function(){
+  const stage = document.getElementById('stage');
+  const rider = document.getElementById('rider');
+  const banner = document.getElementById('banner');
+  const dust = document.getElementById('dust');
+  const hitCountEl = document.getElementById('hitCount');
+  const tryCountEl = document.getElementById('tryCount');
+  const liveRegion = document.getElementById('liveRegion');
+  const reticle = document.getElementById('reticle');
+
+  let hits = 0, tries = 0;
+  let position = 0;        // 0 to 1 across the track
+  let direction = 1;
+  let speed = 0.00075;      // fraction of track per ms
+  let lastTime = null;
+  let animId = null;
+  let disabled = false;     // during fall/reset animation
+
+  function trackBounds(){
+    const stageW = stage.clientWidth;
+    const riderW = rider.clientWidth;
+    const leftPad = stageW * 0.05 + 10;
+    const rightPad = stageW * 0.05 + 10;
+    const usable = stageW - leftPad - rightPad - riderW;
+    return { leftPad, usable };
+  }
+
+  function render(){
+    const { leftPad, usable } = trackBounds();
+    const x = leftPad + position * usable;
+    rider.style.left = x + 'px';
+  }
+
+  function step(ts){
+    if (disabled){ animId = requestAnimationFrame(step); lastTime = ts; return; }
+    if (lastTime === null) lastTime = ts;
+    const dt = ts - lastTime;
+    lastTime = ts;
+
+    position += direction * speed * dt;
+    if (position >= 1){ position = 1; direction = -1; }
+    if (position <= 0){ position = 0; direction = 1; }
+
+    render();
+    animId = requestAnimationFrame(step);
+  }
+
+  window.addEventListener('resize', render);
+
+  // ---------- pointer tracking: the reticle follows the finger/cursor and
+  // reports whether it is currently sitting on top of the moving elephant.
+  // This overlap check IS the timing mechanic — tap while locked to hit. ----------
+  const HIT_PADDING = 24; // forgiveness margin around the elephant, in px, generous for touch
+
+  function pointerOverElephant(x, y){
+    const r = rider.getBoundingClientRect();
+    return (
+      x >= r.left - HIT_PADDING &&
+      x <= r.right + HIT_PADDING &&
+      y >= r.top - HIT_PADDING &&
+      y <= r.bottom + HIT_PADDING
+    );
+  }
+
+  function moveReticle(x, y, locked){
+    reticle.style.transform = 'translate(' + x + 'px,' + y + 'px) scale(' + (locked ? 1.25 : 1) + ')';
+    reticle.classList.add('visible');
+    reticle.classList.toggle('locked', locked);
+    rider.classList.toggle('ready', locked && !disabled);
+  }
+
+  function trackPointer(x, y){
+    const locked = !disabled && pointerOverElephant(x, y);
+    moveReticle(x, y, locked);
+    return locked;
+  }
+
+  // ---------- big, layered elephant trumpet sound that fades away ----------
+  function playTrumpet(){
+    try{
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const now = ctx.currentTime;
+
+      const master = ctx.createGain();
+      master.gain.setValueAtTime(0.0001, now);
+      master.gain.exponentialRampToValueAtTime(0.9, now + 0.05);
+      master.gain.exponentialRampToValueAtTime(0.6, now + 0.4);
+      master.gain.exponentialRampToValueAtTime(0.0001, now + 2.2);
+      master.connect(ctx.destination);
+
+      // resonant band-pass to give the honk a brassy "trumpeting" body
+      const bandpass = ctx.createBiquadFilter();
+      bandpass.type = 'bandpass';
+      bandpass.frequency.setValueAtTime(500, now);
+      bandpass.frequency.linearRampToValueAtTime(900, now + 0.15);
+      bandpass.frequency.linearRampToValueAtTime(420, now + 1.8);
+      bandpass.Q.value = 3.2;
+      bandpass.connect(master);
+
+      // three detuned sawtooth voices, sweeping up then wavering down like a real trumpet call
+      [130, 138, 195].forEach((freq, i) => {
+        const osc = ctx.createOscillator();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(freq * 0.6, now);
+        osc.frequency.exponentialRampToValueAtTime(freq * 2.3, now + 0.18);
+        osc.frequency.exponentialRampToValueAtTime(freq * 1.6, now + 0.5);
+
+        // vibrato / wavering pitch typical of a trumpeting elephant
+        const vibrato = ctx.createOscillator();
+        vibrato.frequency.value = 13;
+        const vibratoGain = ctx.createGain();
+        vibratoGain.gain.value = freq * 0.06;
+        vibrato.connect(vibratoGain);
+        vibratoGain.connect(osc.frequency);
+        vibrato.start(now);
+        vibrato.stop(now + 2.2);
+
+        osc.frequency.linearRampToValueAtTime(freq * 0.75, now + 2.0);
+
+        const g = ctx.createGain();
+        g.gain.setValueAtTime(i === 0 ? 0.8 : (i === 1 ? 0.55 : 0.3), now);
+
+        osc.connect(g);
+        g.connect(bandpass);
+        osc.start(now);
+        osc.stop(now + 2.2);
+      });
+
+      // breathy noise burst at the front of the call
+      const bufferSize = ctx.sampleRate * 0.35;
+      const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+      const data = noiseBuffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++){ data[i] = (Math.random() * 2 - 1) * 0.5; }
+      const noise = ctx.createBufferSource();
+      noise.buffer = noiseBuffer;
+      const noiseFilter = ctx.createBiquadFilter();
+      noiseFilter.type = 'highpass';
+      noiseFilter.frequency.value = 700;
+      const noiseGain = ctx.createGain();
+      noiseGain.gain.setValueAtTime(0.5, now);
+      noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+      noise.connect(noiseFilter);
+      noiseFilter.connect(noiseGain);
+      noiseGain.connect(master);
+      noise.start(now);
+
+      // deep low rumble underneath, fading away last
+      const rumble = ctx.createOscillator();
+      rumble.type = 'sine';
+      rumble.frequency.setValueAtTime(70, now);
+      rumble.frequency.linearRampToValueAtTime(45, now + 2.0);
+      const rumbleGain = ctx.createGain();
+      rumbleGain.gain.setValueAtTime(0.35, now);
+      rumbleGain.gain.exponentialRampToValueAtTime(0.0001, now + 2.4);
+      rumble.connect(rumbleGain);
+      rumbleGain.connect(ctx.destination);
+      rumble.start(now);
+      rumble.stop(now + 2.4);
+
+      setTimeout(() => ctx.close(), 2600);
+    }catch(e){ /* audio unavailable, ignore silently */ }
+  }
+
+  function showBanner(text, isMiss){
+    banner.textContent = text;
+    banner.classList.remove('show','miss');
+    void banner.offsetWidth; // restart animation
+    if (isMiss) banner.classList.add('miss');
+    banner.classList.add('show');
+    liveRegion.textContent = text;
+  }
+
+  function doHit(){
+    disabled = true;
+    hits++;
+    hitCountEl.textContent = hits;
+    playTrumpet();
+    showBanner('അടിച്ചാൽ ആനയും വീഴും! 🎉', false);
+    rider.classList.remove('ready');
+    rider.classList.add('falling');
+
+    setTimeout(() => {
+      rider.classList.remove('falling');
+      position = 0;
+      direction = 1;
+      render();
+      disabled = false;
+      lastTime = null;
+    }, 1300);
+  }
+
+  function attemptHit(x, y){
+    if (disabled) return;
+    tries++;
+    tryCountEl.textContent = tries;
+    const onElephant = pointerOverElephant(x, y);
+    if (onElephant){
+      doHit();
+    } else {
+      dust.style.left = (x - stage.getBoundingClientRect().left - 22) + 'px';
+      dust.style.top = (y - stage.getBoundingClientRect().top - 14) + 'px';
+      showDustAt();
+      showBanner('ആനയെ ഞെക്കണം!', true);
+    }
+  }
+
+  function showDustAt(){
+    dust.classList.remove('show');
+    void dust.offsetWidth;
+    dust.classList.add('show');
+  }
+
+  // The pointer is tracked continuously with a reticle, and locks on
+  // whenever it sits over the moving elephant — tap while locked to hit.
+  stage.addEventListener('pointermove', (e) => {
+    trackPointer(e.clientX, e.clientY);
+  });
+  stage.addEventListener('pointerdown', (e) => {
+    trackPointer(e.clientX, e.clientY);
+    attemptHit(e.clientX, e.clientY);
+  });
+  stage.addEventListener('pointerleave', () => {
+    reticle.classList.remove('visible','locked');
+  });
+
+  render();
+  animId = requestAnimationFrame(step);
+})();
+</script>
+</body>
+</html>
