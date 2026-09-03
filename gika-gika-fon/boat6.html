@@ -1,20 +1,416 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="ml">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Boat 6 — The Rope Bridge</title>
-<meta name="description" content="A creaky crossing linking two docks that never agreed on much else.">
-<link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>അധികം ആയാൽ അമൃതും വിഷം</title>
+<meta name="description" content="അധികം ആയാൽ അമൃതും വിഷം — എത്ര വേണം എന്ന് നിങ്ങൾ തന്നെ തീരുമാനിക്കൂ.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Malayalam:wght@400;500;600;700&family=Baloo+2:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-top:#fff6e6;
+    --bg-mid:#ffe8bf;
+    --bg-low:#eec988;
+    --glow:#fff4d6;
+    --glass:#dfe9ee;
+    --glass-dark:#b9c8d1;
+    --metal:#5a6472;
+    --metal-dark:#3d4552;
+    --liquid:#faf7ee;
+    --liquid-shade:#e9e2d0;
+    --wood:#8a5a34;
+    --wood-dark:#6b4324;
+    --skin:#ffd9a0;
+    --shirt:#3f7d8c;
+    --shirt-dark:#2f5f6b;
+    --ink:#2b241a;
+    --cream:#fffaf0;
+    --danger:#c1444d;
+    --safe:#4a8a5a;
+    --pour:#3f7d8c;
+    --stop:#c1444d;
+    --drink:#caa14a;
+  }
+  *{box-sizing:border-box;}
+  html,body{
+    margin:0;padding:0;width:100%;height:100%;overflow:hidden;
+    background:var(--bg-top);
+    font-family:'Noto Sans Malayalam','Baloo 2',sans-serif;
+  }
+  #stage{position:relative;width:100vw;height:100vh;min-height:600px;}
+  svg#scene{position:absolute;inset:0;width:100%;height:100%;display:block;}
+
+  .title-wrap{
+    position:absolute;top:clamp(16px,4vh,44px);left:0;right:0;
+    text-align:center;padding:0 20px;pointer-events:none;z-index:5;
+  }
+  h1{
+    margin:0;font-weight:700;
+    font-size:clamp(1.05rem,3.2vw,2rem);
+    line-height:1.35;color:var(--ink);
+    text-shadow:0 1px 0 rgba(255,255,255,.4);
+    max-width:20ch;margin:0 auto;
+  }
+  .sub{
+    margin-top:8px;font-family:'Baloo 2',sans-serif;font-weight:500;
+    font-size:clamp(.8rem,1.5vw,1rem);color:#5c4f36;opacity:.85;
+  }
+
+  .controls{
+    position:absolute;left:50%;bottom:clamp(28px,6vh,48px);
+    transform:translateX(-50%);z-index:6;
+    display:flex;gap:12px;flex-wrap:wrap;justify-content:center;
+    padding:0 16px;
+  }
+  .controls button{
+    font-family:'Baloo 2',sans-serif;font-weight:600;
+    font-size:clamp(.85rem,1.7vw,1rem);
+    color:var(--cream);border:none;border-radius:999px;
+    padding:12px 22px;cursor:pointer;
+    box-shadow:0 6px 18px rgba(0,0,0,.18);
+    transition:transform .15s ease, box-shadow .15s ease, opacity .2s;
+  }
+  .controls button:disabled{
+    opacity:.4;cursor:not-allowed;box-shadow:none;transform:none;
+  }
+  .controls button:not(:disabled):hover{transform:translateY(-2px);box-shadow:0 9px 22px rgba(0,0,0,.22);}
+  .controls button:focus-visible{outline:3px solid var(--ink);outline-offset:2px;}
+  #btnPour{background:var(--pour);}
+  #btnStop{background:var(--stop);}
+  #btnDrink{background:var(--drink);color:var(--ink);}
+
+  #liquidTank, #liquidCup, #liquidHeld{transition:y .18s linear, height .18s linear;}
+
+  .stream{opacity:0;}
+  .stage.pouring .stream{
+    opacity:1;
+    animation:flow .35s linear infinite;
+  }
+  @keyframes flow{
+    0%{stroke-dashoffset:0;}
+    100%{stroke-dashoffset:16;}
+  }
+
+  #heldCup{opacity:0;transition:opacity .3s ease;}
+  .stage.drinking #heldCup, .stage.outcome-safe #heldCup, .stage.outcome-danger #heldCup{opacity:1;}
+
+  #tableCup{transition:opacity .3s ease;}
+  .stage.drinking #tableCup, .stage.outcome-safe #tableCup, .stage.outcome-danger #tableCup{opacity:0;}
+
+  #avatar{transform-origin:900px 560px;}
+  .stage.drinking #avatarHead{
+    animation:tilt .5s ease forwards;
+  }
+  @keyframes tilt{
+    to{transform:rotate(-8deg) translate(-4px,2px);}
+  }
+  #eyesNormal{opacity:1;}
+  #eyesX{opacity:0;}
+  #tintSick{opacity:0;transition:opacity .6s ease;}
+  .stage.outcome-danger #tintSick{opacity:1;}
+
+  .stage.outcome-danger #eyesNormal{opacity:0;}
+  .stage.outcome-danger #eyesX{opacity:1;}
+  .stage.outcome-danger #avatar{
+    animation:wobble .9s ease-in-out, fall 0.6s ease-in forwards;
+    animation-delay:0s, .9s;
+  }
+  @keyframes wobble{
+    0%,100%{transform:rotate(0deg);}
+    25%{transform:rotate(-6deg);}
+    50%{transform:rotate(0deg);}
+    75%{transform:rotate(6deg);}
+  }
+  @keyframes fall{
+    to{transform:rotate(88deg) translate(-40px,90px);}
+  }
+
+  .stage.outcome-safe #avatar{
+    animation:happyBounce .7s ease;
+  }
+  @keyframes happyBounce{
+    0%{transform:translateY(0);}
+    30%{transform:translateY(-18px);}
+    55%{transform:translateY(0);}
+    75%{transform:translateY(-8px);}
+    100%{transform:translateY(0);}
+  }
+  .stage.outcome-safe #mouthSmile{opacity:1;}
+  #mouthSmile{opacity:0;transition:opacity .3s ease;}
+
+  .caption{
+    position:absolute;left:50%;top:clamp(96px,20vh,150px);
+    transform:translate(-50%,-8px);z-index:6;text-align:center;
+    opacity:0;pointer-events:none;width:min(90vw,540px);
+    transition:opacity .5s ease, transform .5s ease;
+  }
+  .stage.outcome-safe .caption, .stage.outcome-danger .caption{
+    opacity:1;transform:translate(-50%,0);pointer-events:auto;
+  }
+  .caption p{margin:0 0 6px;font-weight:600;
+    font-size:clamp(1rem,2.4vw,1.4rem);color:var(--ink);}
+  .caption p.small{font-weight:500;font-size:clamp(.82rem,1.7vw,.98rem);color:#5c4f36;}
+  button#again{
+    margin-top:14px;font-family:'Baloo 2',sans-serif;font-weight:600;
+    font-size:clamp(.85rem,1.8vw,1rem);color:var(--cream);
+    background:var(--ink);border:none;padding:10px 24px;border-radius:999px;
+    cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.25);
+    transition:transform .15s ease;
+  }
+  button#again:hover{transform:translateY(-2px);}
+
+  .gauge{
+    position:absolute;right:clamp(14px,4vw,40px);top:50%;
+    transform:translateY(-50%);z-index:6;
+    font-family:'Baloo 2',sans-serif;font-weight:600;
+    font-size:.85rem;color:var(--ink);
+    background:rgba(255,255,255,.55);border-radius:10px;
+    padding:6px 10px;text-align:center;
+    display:none;
+  }
+  .stage.pouring .gauge, .stage.ready .gauge{display:block;}
+
+  @media (prefers-reduced-motion: reduce){
+    #avatarHead, #avatar, .stream{animation:none !important;transition:none !important;}
+    .stage.outcome-danger #avatar{transform:rotate(88deg) translate(-40px,90px);}
+  }
+</style>
 </head>
-<body class="page-boat" style="background: linear-gradient(160deg, #175c56 0%, #0e3b3a 100%);">
+<body>
+<div id="stage" class="stage idle">
+  <div class="title-wrap">
+    <h1>അധികം ആയാൽ അമൃതും വിഷം</h1>
+    <div class="sub">കപ്പ് നിറയ്ക്കൂ — എത്ര വേണം എന്ന് നിങ്ങൾ തീരുമാനിക്കൂ</div>
+  </div>
 
-<section class="boat-hero">
-  <img class="big-head" src="head1.png" alt="Rower of boat 6">
-  <h1>Boat 6: The Rope Bridge</h1>
-  <p>A creaky crossing linking two docks that never agreed on much else.</p>
-  <a class="back-link" href="index.html">&larr; Back to the harbor</a>
-</section>
+  <div class="gauge" id="gauge">0%</div>
 
+  <svg id="scene" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="var(--bg-top)"/>
+        <stop offset="55%" stop-color="var(--bg-mid)"/>
+        <stop offset="100%" stop-color="var(--bg-low)"/>
+      </linearGradient>
+      <radialGradient id="auraGlow" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="var(--glow)" stop-opacity="0.95"/>
+        <stop offset="100%" stop-color="var(--glow)" stop-opacity="0"/>
+      </radialGradient>
+      <clipPath id="tankClip"><rect x="205" y="150" width="130" height="270" rx="14"/></clipPath>
+      <clipPath id="cupClip"><path d="M560,540 L600,610 L680,610 L720,540 Z"/></clipPath>
+      <clipPath id="heldCupClip"><path d="M905,470 L918,505 L958,505 L971,470 Z"/></clipPath>
+    </defs>
+
+    <rect x="0" y="0" width="1200" height="700" fill="url(#bgGrad)"/>
+    <circle cx="270" cy="270" r="230" fill="url(#auraGlow)"/>
+
+    <path d="M0,600 Q600,560 1200,600 L1200,700 L0,700 Z" fill="#e3c98f"/>
+
+    <!-- dispenser -->
+    <g id="dispenser">
+      <rect x="195" y="420" width="150" height="22" rx="6" fill="var(--metal-dark)"/>
+      <rect x="235" y="440" width="16" height="70" fill="var(--metal)"/>
+      <rect x="289" y="440" width="16" height="70" fill="var(--metal)"/>
+      <rect x="210" y="140" width="120" height="290" rx="18" fill="var(--glass)" stroke="var(--glass-dark)" stroke-width="4"/>
+      <rect id="liquidTank" x="212" y="220" width="116" height="205" fill="var(--liquid)" clip-path="url(#tankClip)"/>
+      <rect x="212" y="216" width="116" height="10" fill="var(--liquid-shade)" clip-path="url(#tankClip)" opacity="0.6"/>
+      <rect x="230" y="120" width="80" height="24" rx="6" fill="var(--metal-dark)"/>
+      <!-- spout -->
+      <rect x="325" y="405" width="34" height="14" rx="4" fill="var(--metal-dark)"/>
+      <circle cx="359" cy="412" r="6" fill="var(--metal-dark)"/>
+      <text x="270" y="270" text-anchor="middle" font-family="Noto Sans Malayalam" font-size="22" fill="#7a8a92" opacity="0.55">അമൃതം</text>
+    </g>
+
+    <!-- pour stream -->
+    <line class="stream" x1="359" y1="418" x2="600" y2="540" stroke="var(--liquid)" stroke-width="6" stroke-linecap="round" stroke-dasharray="10 8"/>
+
+    <!-- table -->
+    <rect x="500" y="610" width="260" height="16" rx="4" fill="var(--wood)"/>
+    <rect x="520" y="626" width="14" height="60" fill="var(--wood-dark)"/>
+    <rect x="726" y="626" width="14" height="60" fill="var(--wood-dark)"/>
+
+    <!-- cup on table -->
+    <g id="tableCup">
+      <path d="M560,540 L600,610 L680,610 L720,540 Z" fill="#fff" opacity="0.15" stroke="var(--glass-dark)" stroke-width="3"/>
+      <rect id="liquidCup" x="560" y="610" width="160" height="0" fill="var(--liquid)" clip-path="url(#cupClip)"/>
+      <path d="M560,540 L600,610 L680,610 L720,540 Z" fill="none" stroke="var(--glass-dark)" stroke-width="3"/>
+    </g>
+
+    <!-- avatar -->
+    <g id="avatar">
+      <ellipse cx="900" cy="612" rx="46" ry="10" fill="#000" opacity="0.15"/>
+      <!-- legs -->
+      <rect x="878" y="560" width="16" height="55" rx="6" fill="#3a3f4a"/>
+      <rect x="906" y="560" width="16" height="55" rx="6" fill="#3a3f4a"/>
+      <!-- body -->
+      <path d="M862,470 Q900,448 938,470 L938,565 Q900,585 862,565 Z" fill="var(--shirt)"/>
+      <path d="M862,470 Q900,448 938,470 L936,486 Q900,468 864,486 Z" fill="var(--shirt-dark)"/>
+      <!-- arms -->
+      <rect x="846" y="480" width="16" height="60" rx="8" fill="var(--skin)"/>
+      <rect x="938" y="480" width="16" height="60" rx="8" fill="var(--skin)"/>
+      <!-- head group (tilts on drink) -->
+      <g id="avatarHead">
+        <circle cx="900" cy="430" r="42" fill="var(--skin)"/>
+        <ellipse id="tintSick" cx="900" cy="430" r="42" fill="#8fae6a"/>
+        <path d="M862,410 Q900,378 938,410 Q938,392 900,388 Q862,392 862,410 Z" fill="#3a2e50"/>
+        <g id="eyesNormal">
+          <ellipse cx="884" cy="428" rx="4.5" ry="6" fill="#2b241a"/>
+          <ellipse cx="916" cy="428" rx="4.5" ry="6" fill="#2b241a"/>
+        </g>
+        <g id="eyesX" stroke="#2b241a" stroke-width="3.5" stroke-linecap="round">
+          <line x1="877" y1="421" x2="891" y2="435"/><line x1="891" y1="421" x2="877" y2="435"/>
+          <line x1="909" y1="421" x2="923" y2="435"/><line x1="923" y1="421" x2="909" y2="435"/>
+        </g>
+        <path id="mouthSmile" d="M884,448 Q900,460 916,448" stroke="#2b241a" stroke-width="3" fill="none" stroke-linecap="round"/>
+        <path d="M884,450 Q900,450 916,450" stroke="#2b241a" stroke-width="3" fill="none" stroke-linecap="round"/>
+
+        <!-- held cup near mouth, hidden until drinking -->
+        <g id="heldCup">
+          <path d="M905,470 L918,505 L958,505 L971,470 Z" fill="#fff" opacity="0.15" stroke="var(--glass-dark)" stroke-width="2.5" transform="rotate(-35 938 487)"/>
+          <rect id="liquidHeld" x="905" y="505" width="66" height="0" fill="var(--liquid)" clip-path="url(#heldCupClip)" transform="rotate(-35 938 487)"/>
+          <path d="M905,470 L918,505 L958,505 L971,470 Z" fill="none" stroke="var(--glass-dark)" stroke-width="2.5" transform="rotate(-35 938 487)"/>
+        </g>
+      </g>
+    </g>
+  </svg>
+
+  <div class="caption">
+    <p id="capMain"></p>
+    <p class="small" id="capSub"></p>
+    <button id="again">വീണ്ടും ശ്രമിക്കാം</button>
+  </div>
+
+  <div class="controls">
+    <button id="btnPour">ഒഴിക്കൂ</button>
+    <button id="btnStop" disabled>നിർത്തുക</button>
+    <button id="btnDrink" disabled>കുടിക്കട്ടെ</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  const stage = document.getElementById('stage');
+  const btnPour = document.getElementById('btnPour');
+  const btnStop = document.getElementById('btnStop');
+  const btnDrink = document.getElementById('btnDrink');
+  const again = document.getElementById('again');
+  const gauge = document.getElementById('gauge');
+  const liquidCup = document.getElementById('liquidCup');
+  const liquidHeld = document.getElementById('liquidHeld');
+  const capMain = document.getElementById('capMain');
+  const capSub = document.getElementById('capSub');
+
+  const CUP_MAX_H = 70;      // full cup liquid height in svg units
+  const HELD_MAX_H = 35;
+  const DANGER_THRESHOLD = 58; // percent above which it's fatal
+
+  let fillPercent = 0;
+  let pourInterval = null;
+
+  function setCupHeight(pct){
+    const h = (pct/100) * CUP_MAX_H;
+    liquidCup.setAttribute('height', h);
+    liquidCup.setAttribute('y', 610 - h);
+    gauge.textContent = Math.round(pct) + '%';
+  }
+
+  function setHeldHeight(pct){
+    const h = (pct/100) * HELD_MAX_H;
+    liquidHeld.setAttribute('height', h);
+    liquidHeld.setAttribute('y', 505 - h);
+  }
+
+  function startPour(){
+    if(pourInterval || !stage.classList.contains('idle') && !stage.classList.contains('ready')) {
+      if(pourInterval) return;
+    }
+    stage.classList.remove('idle','ready');
+    stage.classList.add('pouring');
+    btnPour.disabled = true;
+    btnStop.disabled = false;
+    btnDrink.disabled = true;
+
+    pourInterval = setInterval(() => {
+      fillPercent = Math.min(100, fillPercent + 3.2);
+      setCupHeight(fillPercent);
+      if(fillPercent >= 100){
+        stopPour();
+      }
+    }, 130);
+  }
+
+  function stopPour(){
+    if(pourInterval){
+      clearInterval(pourInterval);
+      pourInterval = null;
+    }
+    stage.classList.remove('pouring');
+    stage.classList.add('ready');
+    btnPour.disabled = false;
+    btnStop.disabled = true;
+    btnDrink.disabled = fillPercent <= 0;
+  }
+
+  function drink(){
+    if(fillPercent <= 0) return;
+    btnPour.disabled = true;
+    btnStop.disabled = true;
+    btnDrink.disabled = true;
+    stage.classList.remove('ready');
+    stage.classList.add('drinking');
+    setHeldHeight(fillPercent);
+
+    setTimeout(() => {
+      // drain the held cup
+      let h = fillPercent;
+      const drain = setInterval(() => {
+        h = Math.max(0, h - 6);
+        setHeldHeight(h);
+        if(h <= 0){
+          clearInterval(drain);
+          finishDrink();
+        }
+      }, 60);
+    }, 350);
+  }
+
+  function finishDrink(){
+    const wasDanger = fillPercent > DANGER_THRESHOLD;
+    setTimeout(() => {
+      stage.classList.remove('drinking');
+      if(wasDanger){
+        stage.classList.add('outcome-danger');
+        capMain.textContent = 'അയ്യോ! അധികമായി!';
+        capSub.textContent = 'അധികമായാൽ അമൃതും വിഷമാണ് — മിതത്വം ആയിരുന്നു നല്ലത്.';
+      } else {
+        stage.classList.add('outcome-safe');
+        capMain.textContent = 'ആഹാ, നല്ല സ്വാദ്!';
+        capSub.textContent = 'മിതമായി കുടിച്ചാൽ അമൃതം അമൃതം തന്നെ.';
+      }
+    }, 500);
+  }
+
+  function reset(){
+    if(pourInterval){ clearInterval(pourInterval); pourInterval = null; }
+    fillPercent = 0;
+    setCupHeight(0);
+    setHeldHeight(0);
+    stage.className = 'stage idle';
+    btnPour.disabled = false;
+    btnStop.disabled = true;
+    btnDrink.disabled = true;
+    capMain.textContent = '';
+    capSub.textContent = '';
+  }
+
+  btnPour.addEventListener('click', startPour);
+  btnStop.addEventListener('click', stopPour);
+  btnDrink.addEventListener('click', drink);
+  again.addEventListener('click', reset);
+})();
+</script>
 </body>
 </html>
+
