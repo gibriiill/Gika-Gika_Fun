@@ -1,20 +1,496 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="ml">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Boat 3 — Sandbar Nine</title>
-<meta name="description" content="A thin strip of gold sand that only shows itself at low tide.">
-<link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>&#x0D15;&#x0D3E;&#x0D15;&#x0D4D;&#x0D15;&#x0D2F;&#x0D4D;&#x0D15;&#x0D4D;&#x0D15;&#x0D41;&#x0D02; &#x0D24;&#x0D7B;&#x0D15;&#x0D41;&#x0D1E;&#x0D4D;&#x0D1E;&#x0D4D; &#x0D2A;&#x0D4A;&#x0D7B;&#x0D15;&#x0D41;&#x0D1E;&#x0D4D;&#x0D1E;&#x0D4D;</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Malayalam:wght@400;500;600;700&display=swap">
+<style>
+  :root{
+    --bg-top:#181233;
+    --bg-mid:#2c1c34;
+    --bg-bottom:#3f2618;
+    --cream:#f7ecd2;
+    --cream-dim:#d8c9a3;
+    --gold:#f5c343;
+    --gold-deep:#d99a1f;
+    --crow:#17181c;
+    --toast-bg:#c94f3d;
+    --nest-brown:#5b3a22;
+    --nest-brown-light:#7a5231;
+  }
+
+  *{box-sizing:border-box;}
+
+  html,body{
+    margin:0;
+    height:100%;
+    background:
+      radial-gradient(ellipse at 50% -10%, #3a2a55 0%, transparent 55%),
+      linear-gradient(180deg, var(--bg-top) 0%, var(--bg-mid) 45%, var(--bg-bottom) 100%);
+    color:var(--cream);
+    font-family:'Noto Sans Malayalam', 'Manjari', 'Meera', 'Rachana', 'Kartika', 'Baloo Chettan 2', sans-serif;
+    overflow-x:hidden;
+  }
+
+  .app{
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:flex-start;
+    padding:clamp(28px,6vw,56px) 20px 60px;
+    text-align:center;
+    transition:opacity .8s ease, filter .8s ease;
+  }
+  .app.fading{
+    opacity:0;
+    filter:blur(6px);
+    pointer-events:none;
+  }
+
+  .title{
+    font-family:'Noto Sans Malayalam', 'Manjari', 'Meera', 'Rachana', 'Kartika', sans-serif;
+    font-weight:700;
+    font-size:clamp(1.7rem, 4.4vw, 2.7rem);
+    color:var(--gold);
+    margin:0 0 10px;
+    text-shadow:0 2px 18px rgba(245,195,67,.35);
+    line-height:1.3;
+  }
+
+  .instruction{
+    font-size:clamp(1rem,2.4vw,1.2rem);
+    color:var(--cream-dim);
+    max-width:520px;
+    margin:0 auto 8px;
+    line-height:1.7;
+  }
+
+  .score-hint{
+    font-size:.85rem;
+    color:#a898c9;
+    margin-bottom:30px;
+  }
+
+  /* ---------- Nest & Birds ---------- */
+  .nest-wrap{
+    position:relative;
+    width:clamp(300px,82vw,560px);
+    height:clamp(300px,82vw,560px);
+    margin-top:10px;
+  }
+
+  .nest{
+    position:absolute;
+    inset:6%;
+    border-radius:50%;
+    background:
+      repeating-conic-gradient(from 0deg, var(--nest-brown-light) 0deg 4deg, var(--nest-brown) 4deg 9deg);
+    box-shadow:
+      inset 0 18px 40px rgba(0,0,0,.55),
+      inset 0 -10px 26px rgba(0,0,0,.4),
+      0 12px 30px rgba(0,0,0,.45);
+  }
+  .nest::after{
+    content:'';
+    position:absolute;
+    inset:20%;
+    border-radius:50%;
+    background:radial-gradient(ellipse at 50% 40%, #2a1810 0%, #1b100a 70%);
+    box-shadow:inset 0 10px 24px rgba(0,0,0,.6);
+  }
+
+  .birds{
+    position:absolute;
+    inset:0;
+  }
+
+  .bird{
+    position:absolute;
+    top:50%;
+    left:50%;
+    width:64px;
+    height:56px;
+    margin:-28px 0 0 -32px;
+    background:none;
+    border:none;
+    cursor:pointer;
+    padding:0;
+    transition:transform .25s ease, filter .25s ease;
+  }
+  .bird:hover{ transform:scale(1.12); }
+  .bird.locked{ pointer-events:none; }
+  .bird.locked:not(.is-golden){ filter:saturate(.4) brightness(.7); }
+
+  .bird-shape{
+    position:relative;
+    width:56px;
+    height:46px;
+    margin:0 auto;
+    border-radius:52% 52% 46% 46% / 62% 62% 40% 40%;
+    background:var(--c);
+    box-shadow:
+      inset -5px -6px 9px rgba(0,0,0,.28),
+      inset 4px 4px 6px rgba(255,255,255,.12),
+      0 4px 8px rgba(0,0,0,.4);
+  }
+  .bird-shape::before{ /* eye */
+    content:'';
+    position:absolute;
+    left:15px;
+    top:12px;
+    width:6px;
+    height:6px;
+    border-radius:50%;
+    background:#20180f;
+  }
+  .bird-shape::after{ /* beak */
+    content:'';
+    position:absolute;
+    right:-9px;
+    top:17px;
+    width:0;
+    height:0;
+    border-top:5px solid transparent;
+    border-bottom:5px solid transparent;
+    border-left:11px solid #e8a13c;
+  }
+  .wing{
+    position:absolute;
+    left:6px;
+    bottom:5px;
+    width:20px;
+    height:14px;
+    border-radius:50%;
+    background:rgba(0,0,0,.18);
+    transform:rotate(-18deg);
+  }
+
+  .bird.is-golden .bird-shape{
+    background:linear-gradient(135deg,#fff6d8 0%, var(--gold) 45%, var(--gold-deep) 100%);
+    filter:drop-shadow(0 0 10px rgba(245,195,67,.85));
+    animation:shimmer 2.6s ease-in-out infinite;
+  }
+  .bird.is-golden .bird-shape::after{ border-left-color:#c97a12; }
+
+  @keyframes shimmer{
+    0%,100%{ filter:drop-shadow(0 0 8px rgba(245,195,67,.7)); }
+    50%{ filter:drop-shadow(0 0 16px rgba(245,195,67,1)); }
+  }
+
+  .bird.shake{ animation:shake .45s; }
+  @keyframes shake{
+    0%,100%{ transform:translateX(0); }
+    20%{ transform:translateX(-6px) rotate(-4deg); }
+    40%{ transform:translateX(6px) rotate(4deg); }
+    60%{ transform:translateX(-4px) rotate(-3deg); }
+    80%{ transform:translateX(4px) rotate(3deg); }
+  }
+
+  /* ---------- Toast ---------- */
+  .toast{
+    position:fixed;
+    top:22px;
+    left:50%;
+    transform:translate(-50%,-140%);
+    background:var(--toast-bg);
+    color:#fff8ee;
+    padding:12px 24px;
+    border-radius:999px;
+    font-size:.95rem;
+    box-shadow:0 8px 22px rgba(0,0,0,.4);
+    transition:transform .4s cubic-bezier(.2,.9,.3,1.2);
+    z-index:50;
+    white-space:nowrap;
+  }
+  .toast.show{ transform:translate(-50%,0); }
+
+  /* ---------- Reveal overlay ---------- */
+  .reveal-overlay{
+    position:fixed;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    pointer-events:none;
+    z-index:40;
+  }
+
+  .glow{
+    position:fixed;
+    width:10px;
+    height:10px;
+    border-radius:50%;
+    background:radial-gradient(circle, rgba(255,244,214,.95) 0%, rgba(245,195,67,.55) 30%, rgba(245,195,67,0) 70%);
+    opacity:0;
+    transform:translate(-50%,-50%) scale(1);
+    pointer-events:none;
+    z-index:41;
+  }
+  .glow.on{
+    opacity:1;
+    animation:pulseGlow 2.4s ease-in-out infinite;
+  }
+  @keyframes pulseGlow{
+    0%,100%{ transform:translate(-50%,-50%) scale(1); }
+    50%{ transform:translate(-50%,-50%) scale(1.18); }
+  }
+
+  .golden-clone{
+    position:fixed;
+    z-index:42;
+    opacity:0;
+  }
+  .golden-clone .bird-shape{
+    background:linear-gradient(135deg,#fff6d8 0%, var(--gold) 45%, var(--gold-deep) 100%);
+  }
+  .golden-clone.armed{ opacity:1; }
+
+  .reveal-text{
+    position:fixed;
+    left:50%;
+    top:68%;
+    transform:translate(-50%,20px);
+    text-align:center;
+    opacity:0;
+    transition:opacity .9s ease, transform .9s ease;
+    z-index:43;
+    width:90%;
+    max-width:600px;
+  }
+  .reveal-text.show{
+    opacity:1;
+    transform:translate(-50%,0);
+  }
+  .proverb{
+    font-family:'Noto Sans Malayalam', 'Manjari', 'Meera', 'Rachana', 'Kartika', sans-serif;
+    font-weight:700;
+    font-size:clamp(1.5rem,5vw,2.4rem);
+    color:var(--gold);
+    margin:0 0 8px;
+    text-shadow:0 0 24px rgba(245,195,67,.6);
+  }
+  .proverb-sub{
+    font-size:.95rem;
+    color:var(--cream-dim);
+    margin:0 0 26px;
+  }
+  .replay-btn{
+    pointer-events:auto;
+    font-family:'Noto Sans Malayalam', 'Manjari', 'Meera', 'Rachana', 'Kartika', sans-serif;
+    font-size:1rem;
+    background:var(--gold);
+    color:#241705;
+    border:none;
+    padding:12px 30px;
+    border-radius:999px;
+    cursor:pointer;
+    font-weight:600;
+    box-shadow:0 8px 20px rgba(245,195,67,.4);
+    transition:transform .2s ease;
+  }
+  .replay-btn:hover{ transform:translateY(-2px) scale(1.03); }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation-duration:.001ms !important; transition-duration:.2s !important; }
+  }
+</style>
 </head>
-<body class="page-boat" style="background: linear-gradient(160deg, #a97c39 0%, #7a5825 100%);">
+<body>
 
-<section class="boat-hero">
-  <img class="big-head" src="head1.png" alt="Rower of boat 3">
-  <h1>Boat 3: Sandbar Nine</h1>
-  <p>A thin strip of gold sand that only shows itself at low tide.</p>
-  <a class="back-link" href="index.html">&larr; Back to the harbor</a>
-</section>
+  <div class="app" id="app">
+    <h1 class="title">&#x0D15;&#x0D3E;&#x0D15;&#x0D4D;&#x0D15;&#x0D2F;&#x0D4D;&#x0D15;&#x0D4D;&#x0D15;&#x0D41;&#x0D02; &#x0D24;&#x0D7B;&#x0D15;&#x0D41;&#x0D1E;&#x0D4D;&#x0D1E;&#x0D4D; &#x0D2A;&#x0D4A;&#x0D7B;&#x0D15;&#x0D41;&#x0D1E;&#x0D4D;&#x0D1E;&#x0D4D;</h1>
+    <p class="instruction">താഴെയുള്ള ഒൻപതു കുഞ്ഞുങ്ങളിൽ ഏതാണ് കാക്കയുടെ കുഞ്ഞ് എന്ന് കണ്ടെത്തൂ</p>
+    <p class="score-hint">കുഞ്ഞിനെ തൊട്ട് തിരഞ്ഞെടുക്കൂ</p>
 
+    <div class="nest-wrap">
+      <div class="nest"></div>
+      <div class="birds" id="birds"></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <div class="reveal-overlay">
+    <div class="glow" id="glow"></div>
+    <div class="golden-clone" id="goldenClone">
+      <div class="bird-shape"><div class="wing"></div></div>
+    </div>
+    <div class="reveal-text" id="revealText">
+      <p class="proverb">കാക്കയ്ക്കും തൻകുഞ്ഞ് പൊൻകുഞ്ഞ്</p>
+      <p class="proverb-sub">സ്വന്തം കുഞ്ഞ് ആർക്കും പൊന്നു പോലെ ആണ്</p>
+      <button class="replay-btn" id="replayBtn">വീണ്ടും കളിക്കാം</button>
+    </div>
+  </div>
+
+<script>
+(function(){
+  var PALETTE = [
+    {type:'normal', color:'#5b8dd6'},
+    {type:'normal', color:'#cf5a4e'},
+    {type:'normal', color:'#5fae6c'},
+    {type:'normal', color:'#9873d9'},
+    {type:'normal', color:'#dd7fae'},
+    {type:'normal', color:'#3fa9a4'},
+    {type:'normal', color:'#8a6239'}
+  ];
+
+  var WRONG_MESSAGES = [
+    'ഏയ്, അത് കാക്കക്കുഞ്ഞല്ല!',
+    'തെറ്റി! ഒന്നുകൂടി നോക്കൂ...',
+    'അല്ല, വേറൊരു കുഞ്ഞാണ് അത്'
+  ];
+
+  var birdsEl = document.getElementById('birds');
+  var appEl = document.getElementById('app');
+  var toastEl = document.getElementById('toast');
+  var glowEl = document.getElementById('glow');
+  var cloneEl = document.getElementById('goldenClone');
+  var revealTextEl = document.getElementById('revealText');
+  var replayBtn = document.getElementById('replayBtn');
+
+  var answered = false;
+  var toastTimer = null;
+
+  function shuffle(arr){
+    for(var i = arr.length - 1; i > 0; i--){
+      var j = Math.floor(Math.random() * (i+1));
+      var t = arr[i]; arr[i] = arr[j]; arr[j] = t;
+    }
+    return arr;
+  }
+
+  function buildBirdSet(){
+    var set = PALETTE.slice();
+    set.push({type:'crow', color:'#17181c'});
+    set.push({type:'golden', color:'#f5c343'});
+    return shuffle(set);
+  }
+
+  function layout(){
+    var items = birdsEl.querySelectorAll('.bird');
+    var n = items.length;
+    var radius = 39; // percent of nest-wrap
+    items.forEach(function(el, i){
+      var angle = (i / n) * Math.PI * 2 - Math.PI / 2;
+      var x = 50 + radius * Math.cos(angle);
+      var y = 50 + radius * Math.sin(angle) * 0.92;
+      el.style.left = x + '%';
+      el.style.top = y + '%';
+    });
+  }
+
+  function render(){
+    birdsEl.innerHTML = '';
+    var set = buildBirdSet();
+    set.forEach(function(bird){
+      var btn = document.createElement('button');
+      btn.className = 'bird' + (bird.type === 'golden' ? ' is-golden' : '');
+      btn.setAttribute('data-type', bird.type);
+      btn.setAttribute('aria-label', 'baby bird');
+      var shape = document.createElement('div');
+      shape.className = 'bird-shape';
+      shape.style.setProperty('--c', bird.color);
+      var wing = document.createElement('div');
+      wing.className = 'wing';
+      shape.appendChild(wing);
+      btn.appendChild(shape);
+      btn.addEventListener('click', function(){ onPick(btn, bird.type); });
+      birdsEl.appendChild(btn);
+    });
+    layout();
+  }
+
+  function showToast(msg){
+    clearTimeout(toastTimer);
+    toastEl.textContent = msg;
+    toastEl.classList.add('show');
+    toastTimer = setTimeout(function(){
+      toastEl.classList.remove('show');
+    }, 1400);
+  }
+
+  function onPick(el, type){
+    if(answered) return;
+    answered = true;
+
+    var all = birdsEl.querySelectorAll('.bird');
+    all.forEach(function(b){ b.classList.add('locked'); });
+
+    if(type !== 'golden'){
+      el.classList.add('shake');
+      showToast(WRONG_MESSAGES[Math.floor(Math.random() * WRONG_MESSAGES.length)]);
+      setTimeout(reveal, 1050);
+    } else {
+      showToast('അതെ! സ്വന്തം കുഞ്ഞ് പൊൻകുഞ്ഞ് തന്നെ');
+      setTimeout(reveal, 550);
+    }
+  }
+
+  function reveal(){
+    var goldenEl = birdsEl.querySelector('.bird.is-golden');
+    var rect = goldenEl.getBoundingClientRect();
+    var cx = rect.left + rect.width / 2;
+    var cy = rect.top + rect.height / 2;
+
+    // position clone & glow at the golden bird's current screen spot
+    cloneEl.style.transition = 'none';
+    cloneEl.style.left = cx + 'px';
+    cloneEl.style.top = cy + 'px';
+    cloneEl.style.transform = 'translate(-50%,-50%) scale(1)';
+    cloneEl.classList.add('armed');
+
+    glowEl.style.transition = 'none';
+    glowEl.style.left = cx + 'px';
+    glowEl.style.top = cy + 'px';
+    glowEl.style.transform = 'translate(-50%,-50%) scale(1)';
+
+    appEl.classList.add('fading');
+
+    // force reflow, then animate to center stage
+    requestAnimationFrame(function(){
+      requestAnimationFrame(function(){
+        cloneEl.style.transition = 'left 1.15s cubic-bezier(.22,.8,.25,1), top 1.15s cubic-bezier(.22,.8,.25,1), transform 1.15s cubic-bezier(.22,.8,.25,1)';
+        glowEl.style.transition = 'left 1.15s cubic-bezier(.22,.8,.25,1), top 1.15s cubic-bezier(.22,.8,.25,1), width 1.15s ease, height 1.15s ease';
+
+        var targetX = window.innerWidth / 2;
+        var targetY = window.innerHeight * 0.42;
+
+        cloneEl.style.left = targetX + 'px';
+        cloneEl.style.top = targetY + 'px';
+        cloneEl.style.transform = 'translate(-50%,-50%) scale(3.2)';
+
+        glowEl.style.left = targetX + 'px';
+        glowEl.style.top = targetY + 'px';
+        glowEl.style.width = '520px';
+        glowEl.style.height = '520px';
+        glowEl.classList.add('on');
+      });
+    });
+
+    setTimeout(function(){
+      revealTextEl.classList.add('show');
+    }, 950);
+  }
+
+  function reset(){
+    answered = false;
+    appEl.classList.remove('fading');
+    revealTextEl.classList.remove('show');
+    glowEl.classList.remove('on');
+    glowEl.style.transition = 'none';
+    cloneEl.classList.remove('armed');
+    cloneEl.style.transition = 'none';
+    render();
+  }
+
+  replayBtn.addEventListener('click', reset);
+  window.addEventListener('resize', layout);
+
+  render();
+})();
+</script>
 </body>
 </html>
