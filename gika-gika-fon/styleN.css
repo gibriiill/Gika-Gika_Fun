@@ -104,6 +104,19 @@ a{ color: inherit; }
   background-size: 26px 26px;
   animation: shimmer 9s linear infinite;
   pointer-events: none;
+  z-index: 1;
+}
+
+/* WebGL "Liquid Ether" water effect (see harbor-fx.js / liquid-ether.js).
+   Sits behind the shimmer dots and the boats, and never intercepts
+   clicks/hover meant for the boat links. */
+.harbor-fx{
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  opacity: 0.85;
 }
 
 @keyframes shimmer{
@@ -113,6 +126,7 @@ a{ color: inherit; }
 
 .lane{
   position: relative;
+  z-index: 2;
   height: 156px;
   border-bottom: 1px dashed rgba(246,240,228,0.14);
 }
