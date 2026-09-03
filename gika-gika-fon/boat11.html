@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="ml">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+<title>അടുപ്പത്ത് വെച്ചത് കാക്ക കൊണ്ടുപോയി</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+Chettan+2:wght@500;700;800&family=Baloo+2:wght@500;600;700&family=Noto+Sans+Malayalam:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --wall:#1e3934;
+    --wall-dark:#162b27;
+    --tile:#f4ead4;
+    --tile-line:#d8c8a2;
+    --tile-accent:#3f7a72;
+    --wood:#7a4423;
+    --wood-dark:#5c3119;
+    --stove-body:#262421;
+    --stove-panel:#a5342a;
+    --flame1:#ffb347;
+    --flame2:#ff6a3d;
+    --cream:#f8f1e0;
+    --ink:#241b12;
+    --gold:#e2a63b;
+    --egg-white:#fdf6e3;
+    --egg-yolk:#f2b134;
+    --panel-shadow: 0 10px 24px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box;}
+  html,body{
+    margin:0; padding:0; height:100%;
+    font-family:'Noto Sans Malayalam', 'Baloo 2', sans-serif;
+    background:var(--wall-dark);
+    overflow:hidden;
+    -webkit-tap-highlight-color: transparent;
+    user-select:none;
+    text-rendering:optimizeLegibility;
+    font-feature-settings:"liga" 1,"clig" 1,"akhn" 1,"rphf" 1,"blwf" 1,"half" 1,"pstf" 1,"vatu" 1,"cjct" 1;
+    -webkit-font-feature-settings:"liga" 1,"clig" 1,"akhn" 1,"rphf" 1,"blwf" 1,"half" 1,"pstf" 1,"vatu" 1,"cjct" 1;
+  }
+  .stage{
+    position:relative;
+    width:100vw; height:100vh;
+    background:
+      radial-gradient(ellipse at 50% -10%, rgba(255,255,255,.05), transparent 60%),
+      linear-gradient(180deg, var(--wall) 0%, var(--wall) 62%, var(--wood-dark) 62%, var(--wood-dark) 100%);
+    display:flex; flex-direction:column;
+  }
+
+  /* ---------- Header ---------- */
+  .header{
+    position:relative;
+    z-index:5;
+    padding:14px 18px 8px;
+    text-align:center;
+    flex-shrink:0;
+  }
+  h1{
+    font-family:'Noto Sans Malayalam', 'Baloo Chettan 2', sans-serif;
+    font-weight:800;
+    color:var(--cream);
+    font-size:clamp(20px,4.2vw,34px);
+    margin:0;
+    text-shadow:0 3px 0 rgba(0,0,0,.35);
+  }
+  .subtitle{
+    color:#c9d8c3;
+    font-size:clamp(11px,2vw,14px);
+    margin-top:4px;
+    font-weight:500;
+    opacity:.85;
+  }
+
+  .toast{
+    margin:10px auto 0;
+    background:var(--cream);
+    color:var(--ink);
+    font-family:'Noto Sans Malayalam', 'Baloo Chettan 2', sans-serif;
+    font-weight:700;
+    font-size:clamp(13px,2.6vw,17px);
+    padding:9px 22px;
+    border-radius:999px;
+    box-shadow:var(--panel-shadow);
+    display:inline-block;
+    border:2px solid rgba(0,0,0,.06);
+    transition:transform .2s ease;
+  }
+  .toast.pulse{ animation:pulse .5s ease; }
+  @keyframes pulse{ 0%{transform:scale(1)} 40%{transform:scale(1.06)} 100%{transform:scale(1)} }
+
+  /* ---------- Kitchen wall decor ---------- */
+  .backsplash{
+    position:absolute;
+    left:0; right:0;
+    top:0; height:62%;
+    background-image:
+      linear-gradient(var(--tile-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--tile-line) 1px, transparent 1px);
+    background-size:38px 38px;
+    background-position:0 40%;
+    opacity:.08;
+    pointer-events:none;
+  }
+  .shelf{
+    position:absolute;
+    top:14%;
+    left:6%;
+    display:flex;
+    gap:10px;
+    opacity:.9;
+  }
+  .shelf span{
+    font-size:26px;
+    filter:drop-shadow(0 3px 3px rgba(0,0,0,.4));
+  }
+  .window{
+    position:absolute;
+    top:10%; right:6%;
+    width:min(16vw,120px); height:min(16vw,120px);
+    background:linear-gradient(180deg,#ffd88a,#ff9c5e 60%, #e8734a);
+    border:6px solid var(--tile);
+    border-radius:8px;
+    box-shadow:var(--panel-shadow), inset 0 0 0 2px rgba(0,0,0,.15);
+  }
+  .window::after{
+    content:'';
+    position:absolute; inset:0;
+    background:linear-gradient(90deg, transparent 48%, var(--tile) 48%, var(--tile) 52%, transparent 52%),
+               linear-gradient(0deg, transparent 48%, var(--tile) 48%, var(--tile) 52%, transparent 52%);
+  }
+
+  /* ---------- Main play area ---------- */
+  .kitchen{
+    position:relative;
+    flex:1;
+    display:flex;
+    align-items:flex-end;
+    justify-content:center;
+  }
+
+  /* Stove */
+  .stove-wrap{
+    position:absolute;
+    bottom:26%;
+    right:8%;
+    text-align:center;
+  }
+  .stove{
+    position:relative;
+    width:min(34vw,220px);
+    height:min(20vw,130px);
+    background:linear-gradient(180deg,#33302b,var(--stove-body));
+    border-radius:14px 14px 6px 6px;
+    box-shadow:var(--panel-shadow), inset 0 -6px 0 rgba(0,0,0,.35);
+  }
+  .stove::before{
+    content:'';
+    position:absolute;
+    left:8%; right:8%; bottom:-10px; height:12px;
+    background:var(--wood-dark);
+    border-radius:0 0 6px 6px;
+  }
+  .burner{
+    position:absolute;
+    top:14%;
+    left:50%;
+    transform:translateX(-50%);
+    width:56%;
+    height:44%;
+    border-radius:50%;
+    background:radial-gradient(circle at 50% 45%, #4a4741 0%, #201e1b 70%);
+    box-shadow:inset 0 0 0 4px #131210;
+  }
+  .flame{
+    position:absolute;
+    left:50%; bottom:98%;
+    transform:translateX(-50%) scale(.9);
+    width:70%;
+    opacity:0;
+    transition:opacity .3s ease;
+    pointer-events:none;
+  }
+  .flame.on{ opacity:1; animation:flicker 0.5s infinite alternate; }
+  @keyframes flicker{
+    0%{ transform:translateX(-50%) scale(.92) rotate(-1deg);}
+    100%{ transform:translateX(-50%) scale(1.05) rotate(1deg);}
+  }
+  .flame svg{ width:100%; display:block; }
+  .knobs{
+    position:absolute;
+    bottom:14px; left:0; right:0;
+    display:flex; justify-content:center; gap:14px;
+  }
+  .knobs span{
+    width:16px; height:16px; border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, #d8563f, var(--stove-panel));
+    box-shadow:0 2px 3px rgba(0,0,0,.5);
+  }
+
+  /* Pan */
+  .pan-slot{
+    position:absolute;
+    top:-8%;
+    left:50%;
+    transform:translateX(-50%);
+    width:min(30vw,190px);
+    height:min(30vw,190px);
+    z-index:4;
+  }
+  .pan{
+    position:relative;
+    width:100%; height:100%;
+    transition:transform .55s cubic-bezier(.34,1.56,.64,1), opacity .3s ease;
+  }
+  .pan svg{ width:100%; height:100%; display:block; filter:drop-shadow(0 8px 10px rgba(0,0,0,.4)); }
+  .pan.hidden{ opacity:0; transform:scale(.4) translateY(40px); pointer-events:none; }
+
+  .fill{
+    position:absolute;
+    left:50%; top:46%;
+    transform:translate(-50%,-50%);
+    width:0%;
+    height:0%;
+    border-radius:50%;
+    transition:width .5s ease, height .5s ease, background .6s ease;
+    pointer-events:none;
+  }
+  .fill.oil{ background:radial-gradient(circle, #e6c464 0%, #c99a2e 75%); opacity:.85; }
+  .fill.egg{ background:radial-gradient(circle at 40% 35%, var(--egg-white) 0%, var(--egg-white) 55%, #f0e6c9 100%); }
+  .yolk{
+    position:absolute;
+    left:50%; top:46%;
+    width:0; height:0;
+    border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, #ffd15c, var(--egg-yolk));
+    transform:translate(-50%,-50%);
+    transition:width .4s ease, height .4s ease, top .4s ease;
+    box-shadow:0 0 0 2px rgba(0,0,0,.05);
+  }
+  .specks{ position:absolute; inset:0; pointer-events:none; }
+  .speck{
+    position:absolute;
+    width:3px; height:3px;
+    border-radius:50%;
+  }
+  .speck.salt{ background:#fff; box-shadow:0 0 2px rgba(0,0,0,.2); }
+  .speck.pepper{ background:#2a2117; }
+
+  .steam{
+    position:absolute;
+    top:-6px; left:50%;
+    transform:translateX(-50%);
+    display:flex; gap:10px;
+    opacity:0;
+    transition:opacity .4s ease;
+    pointer-events:none;
+  }
+  .steam.on{ opacity:.8; }
+  .steam span{
+    width:6px; height:20px;
+    background:linear-gradient(180deg, rgba(255,255,255,.75), rgba(255,255,255,0));
+    border-radius:6px;
+    animation:rise 1.6s ease-in-out infinite;
+  }
+  .steam span:nth-child(2){ animation-delay:.4s; }
+  .steam span:nth-child(3){ animation-delay:.8s; }
+  @keyframes rise{
+    0%{ transform:translateY(0) scaleY(.6); opacity:0; }
+    30%{ opacity:.9; }
+    100%{ transform:translateY(-28px) scaleY(1.1); opacity:0; }
+  }
+
+  /* Counter */
+  .counter{
+    position:relative;
+    z-index:6;
+    display:flex;
+    justify-content:center;
+    gap:clamp(10px,3vw,26px);
+    padding:14px 10px calc(env(safe-area-inset-bottom,0px) + 16px);
+    flex-shrink:0;
+    background:linear-gradient(180deg, rgba(0,0,0,0), rgba(0,0,0,.18));
+  }
+  .item{
+    position:relative;
+    width:clamp(58px,15vw,88px);
+    height:clamp(58px,15vw,88px);
+    background:var(--cream);
+    border-radius:16px;
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:var(--panel-shadow);
+    cursor:pointer;
+    border:2px solid rgba(0,0,0,.05);
+    transition:transform .18s ease, opacity .3s ease, filter .3s ease, box-shadow .18s ease;
+  }
+  .item svg{ width:66%; height:66%; }
+  .item .label{
+    position:absolute;
+    bottom:-20px;
+    font-family:'Noto Sans Malayalam', 'Baloo Chettan 2', sans-serif;
+    font-weight:700;
+    font-size:clamp(10px,2vw,13px);
+    color:var(--cream);
+    white-space:nowrap;
+  }
+  .item:active{ transform:scale(.92); }
+  .item.active-target{
+    box-shadow:0 0 0 4px var(--gold), var(--panel-shadow);
+    transform:translateY(-4px);
+  }
+  .item.used{
+    opacity:.25;
+    filter:grayscale(1);
+    pointer-events:none;
+    box-shadow:none;
+  }
+  .item.disabled{
+    filter:grayscale(.5);
+    opacity:.55;
+  }
+  .item.shake{ animation:shake .4s ease; }
+  @keyframes shake{
+    0%,100%{ transform:translateX(0); }
+    20%{ transform:translateX(-6px); }
+    40%{ transform:translateX(6px); }
+    60%{ transform:translateX(-4px); }
+    80%{ transform:translateX(4px); }
+  }
+
+  /* flying bits: egg shell, oil drop, crack */
+  .fx{
+    position:fixed;
+    z-index:50;
+    pointer-events:none;
+  }
+
+  /* Crow */
+  .crow{
+    position:fixed;
+    top:-140px;
+    left:-140px;
+    width:min(26vw,170px);
+    z-index:40;
+    transition:none;
+    pointer-events:none;
+  }
+  .crow svg{ width:100%; display:block; filter:drop-shadow(0 10px 12px rgba(0,0,0,.4)); }
+  .crow .carried-pan{
+    position:absolute;
+    width:34%;
+    left:33%;
+    top:58%;
+    opacity:0;
+    transition:opacity .2s ease;
+  }
+  .crow .carried-pan svg{ width:100%; display:block; }
+
+  /* Progress bar during cooking */
+  .progress-wrap{
+    position:absolute;
+    left:50%; top:2%;
+    transform:translateX(-50%);
+    width:min(60vw,300px);
+    height:10px;
+    background:rgba(255,255,255,.18);
+    border-radius:99px;
+    overflow:hidden;
+    opacity:0;
+    transition:opacity .3s ease;
+    z-index:5;
+  }
+  .progress-wrap.on{ opacity:1; }
+  .progress-bar{
+    height:100%; width:0%;
+    background:linear-gradient(90deg,var(--gold),var(--flame2));
+    transition:width linear;
+  }
+
+  /* End overlay */
+  .overlay{
+    position:fixed; inset:0;
+    background:rgba(10,16,14,.72);
+    backdrop-filter:blur(2px);
+    display:flex; align-items:center; justify-content:center;
+    opacity:0; pointer-events:none;
+    transition:opacity .5s ease;
+    z-index:80;
+    padding:20px;
+  }
+  .overlay.show{ opacity:1; pointer-events:auto; }
+  .card{
+    background:var(--cream);
+    border-radius:22px;
+    padding:32px 28px;
+    max-width:420px;
+    text-align:center;
+    box-shadow:0 20px 50px rgba(0,0,0,.5);
+    transform:translateY(16px) scale(.96);
+    transition:transform .5s cubic-bezier(.34,1.56,.64,1);
+  }
+  .overlay.show .card{ transform:translateY(0) scale(1); }
+  .card .big{
+    font-family:'Noto Sans Malayalam', 'Baloo Chettan 2', sans-serif;
+    font-weight:800;
+    font-size:clamp(22px,5vw,30px);
+    color:var(--stove-panel);
+    margin:0 0 6px;
+    line-height:1.25;
+  }
+  .card .small{
+    font-family:'Noto Sans Malayalam', 'Baloo Chettan 2', sans-serif;
+    color:#5a5245;
+    font-size:14px;
+    margin:0 0 22px;
+    line-height:1.5;
+  }
+  .card button{
+    font-family:'Noto Sans Malayalam', 'Baloo Chettan 2', sans-serif;
+    font-weight:700;
+    font-size:16px;
+    background:var(--stove-panel);
+    color:var(--cream);
+    border:none;
+    padding:12px 28px;
+    border-radius:999px;
+    cursor:pointer;
+    box-shadow:0 6px 0 #7a251c;
+    transition:transform .12s ease, box-shadow .12s ease;
+  }
+  .card button:active{
+    transform:translateY(4px);
+    box-shadow:0 2px 0 #7a251c;
+  }
+
+  @media (max-width:480px){
+    .shelf{ display:none; }
+    .stove-wrap{ right:50%; transform:translateX(50%); bottom:24%; }
+  }
+</style>
+</head>
+<body>
+
+<div class="stage">
+  <div class="backsplash"></div>
+  <div class="shelf">
+    <span>🫙</span><span>🍯</span><span>🧄</span>
+  </div>
+  <div class="window"></div>
+
+  <div class="header">
+    <h1>അടുപ്പത്ത് വെച്ചത് കാക്ക കൊണ്ടുപോയി</h1>
+    <div class="toast" id="toast">പാത്രം എടുത്ത് അടുപ്പിൽ വെക്കൂ 🍳</div>
+  </div>
+
+  <div class="progress-wrap" id="progressWrap"><div class="progress-bar" id="progressBar"></div></div>
+
+  <div class="kitchen">
+    <div class="stove-wrap">
+      <div class="stove">
+        <div class="burner">
+          <div class="flame" id="flame">
+            <svg viewBox="0 0 100 90"><path d="M50 5 C30 30 25 45 35 60 C30 55 28 48 32 42 C30 60 45 75 50 85 C55 75 70 60 68 42 C72 48 70 55 65 60 C75 45 70 30 50 5Z" fill="url(#g1)"/><defs><linearGradient id="g1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#ffe08a"/><stop offset="45%" stop-color="var(--flame1)"/><stop offset="100%" stop-color="var(--flame2)"/></linearGradient></defs></svg>
+          </div>
+        </div>
+        <div class="knobs"><span></span><span></span><span></span></div>
+      </div>
+
+      <div class="pan-slot">
+        <div class="pan" id="pan">
+          <div class="steam" id="steam"><span></span><span></span><span></span></div>
+          <svg viewBox="0 0 200 200">
+            <ellipse cx="100" cy="105" rx="78" ry="70" fill="#3a3a3d"/>
+            <ellipse cx="100" cy="100" rx="78" ry="70" fill="#54555a"/>
+            <ellipse cx="100" cy="97" rx="64" ry="56" fill="#25262b"/>
+            <rect x="168" y="90" width="70" height="16" rx="8" fill="#54555a" transform="rotate(-6 168 90)"/>
+          </svg>
+          <div class="fill oil" id="fillOil"></div>
+          <div class="fill egg" id="fillEgg"></div>
+          <div class="yolk" id="yolk"></div>
+          <div class="specks" id="specks"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="counter">
+    <div class="item" id="item-pan" data-step="pan">
+      <svg viewBox="0 0 100 100"><ellipse cx="45" cy="52" rx="34" ry="30" fill="#54555a"/><ellipse cx="45" cy="49" rx="28" ry="24" fill="#25262b"/><rect x="72" y="42" width="30" height="9" rx="4" fill="#54555a"/></svg>
+      <div class="label">പാത്രം</div>
+    </div>
+    <div class="item disabled" id="item-oil" data-step="oil">
+      <svg viewBox="0 0 100 100"><path d="M40 10h20v14l10 10v54a6 6 0 0 1-6 6H36a6 6 0 0 1-6-6V34l10-10Z" fill="#c99a2e"/><rect x="42" y="6" width="16" height="8" rx="2" fill="#7a5c1a"/></svg>
+      <div class="label">എണ്ണ</div>
+    </div>
+    <div class="item disabled" id="item-egg" data-step="egg">
+      <svg viewBox="0 0 100 100"><ellipse cx="50" cy="55" rx="26" ry="34" fill="#fdf6e3" stroke="#e8dcb8" stroke-width="2"/></svg>
+      <div class="label">മുട്ട</div>
+    </div>
+    <div class="item disabled" id="item-salt" data-step="salt">
+      <svg viewBox="0 0 100 100"><path d="M35 30h30l6 50a10 10 0 0 1-10 12H39a10 10 0 0 1-10-12Z" fill="#f4f4f4" stroke="#ccc" stroke-width="2"/><rect x="33" y="18" width="34" height="14" rx="4" fill="#8b8b8b"/></svg>
+      <div class="label">ഉപ്പ്</div>
+    </div>
+    <div class="item disabled" id="item-pepper" data-step="pepper">
+      <svg viewBox="0 0 100 100"><path d="M35 30h30l6 50a10 10 0 0 1-10 12H39a10 10 0 0 1-10-12Z" fill="#3b332b" stroke="#221d18" stroke-width="2"/><rect x="33" y="18" width="34" height="14" rx="4" fill="#8b8b8b"/></svg>
+      <div class="label">കുരുമുളക്</div>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="card">
+    <p class="big">അടുപ്പത്ത് വെച്ചത് കാക്ക കൊണ്ടുപോയി! 🐦‍⬛</p>
+    <p class="small">മുട്ട വെന്തുകൊണ്ടിരിക്കുമ്പോൾ, ഒരു കാക്ക പറന്നുവന്ന് പാത്രം മുഴുവൻ കൊത്തിയെടുത്ത് പറന്നുപോയി. ഇത്ര നേരത്തെ പാചകം ഒരു നിമിഷം കൊണ്ട് ഇല്ലാതായി.</p>
+    <button id="restartBtn">വീണ്ടും കളിക്കാം</button>
+  </div>
+</div>
+
+<div class="crow" id="crow">
+  <div class="carried-pan" id="carriedPan">
+    <svg viewBox="0 0 200 200"><ellipse cx="100" cy="105" rx="78" ry="70" fill="#3a3a3d"/><ellipse cx="100" cy="100" rx="78" ry="70" fill="#54555a"/><ellipse cx="100" cy="97" rx="64" ry="56" fill="#25262b"/><rect x="168" y="90" width="70" height="16" rx="8" fill="#54555a" transform="rotate(-6 168 90)"/></svg>
+  </div>
+  <svg viewBox="0 0 160 120">
+    <path d="M80 30 C60 10 30 15 15 35 C35 30 45 38 50 48 C25 45 5 55 0 75 C20 65 35 68 44 76 C30 82 20 98 22 115 C34 100 48 92 62 92 C58 100 60 110 68 116 C70 104 78 96 90 94 C102 96 110 104 112 116 C120 110 122 100 118 92 C132 92 146 100 158 115 C160 98 150 82 136 76 C145 68 160 65 180 75 C175 55 155 45 130 48 C135 38 145 30 165 35 C150 15 120 10 100 30 C94 24 86 24 80 30Z" fill="#1b1b1e" transform="translate(-10,0) scale(0.95)"/>
+    <circle cx="118" cy="46" r="3.4" fill="#ffd15c"/>
+    <path d="M132 46 L150 42 L133 52Z" fill="#e2a63b"/>
+  </svg>
+</div>
+
+<script>
+(function(){
+  const steps = ['pan','oil','egg','salt','pepper'];
+  let stepIndex = 0;
+  let cookingStarted = false;
+
+  // ---- audio: synthesized crow caw (no external files needed) ----
+  let audioCtx = null;
+  function ensureAudioCtx(){
+    if (!audioCtx){
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (AC) audioCtx = new AC();
+    }
+    if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+    return audioCtx;
+  }
+
+  function playCrowCall(){
+    const ctx = ensureAudioCtx();
+    if (!ctx) return;
+    const now = ctx.currentTime;
+
+    function caw(start, dur, peakFreq, endFreq, vol){
+      const osc = ctx.createOscillator();
+      osc.type = 'sawtooth';
+      const osc2 = ctx.createOscillator();
+      osc2.type = 'square';
+      osc2.detune.value = -14;
+
+      const filter = ctx.createBiquadFilter();
+      filter.type = 'bandpass';
+      filter.Q.value = 1.1;
+      filter.frequency.setValueAtTime(peakFreq, start);
+      filter.frequency.exponentialRampToValueAtTime(endFreq, start + dur);
+
+      const gain = ctx.createGain();
+      gain.gain.setValueAtTime(0.0001, start);
+      gain.gain.exponentialRampToValueAtTime(vol, start + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, start + dur);
+
+      osc.frequency.setValueAtTime(peakFreq, start);
+      osc.frequency.exponentialRampToValueAtTime(endFreq, start + dur);
+      osc2.frequency.setValueAtTime(peakFreq * 0.98, start);
+      osc2.frequency.exponentialRampToValueAtTime(endFreq * 0.98, start + dur);
+
+      osc.connect(filter);
+      osc2.connect(filter);
+      filter.connect(gain);
+      gain.connect(ctx.destination);
+
+      osc.start(start); osc.stop(start + dur);
+      osc2.start(start); osc2.stop(start + dur);
+    }
+
+    caw(now, 0.16, 950, 340, 0.5);
+    caw(now + 0.20, 0.15, 900, 330, 0.45);
+    caw(now + 0.42, 0.19, 850, 300, 0.4);
+  }
+
+  const toastEl = document.getElementById('toast');
+  const messages = {
+    pan:    'പാത്രം എടുത്ത് അടുപ്പിൽ വെക്കൂ 🍳',
+    oil:    'ഇനി എണ്ണ എടുത്ത് പാത്രത്തിൽ ഒഴിക്കൂ',
+    egg:    'മുട്ട എടുത്ത് ഉടച്ച് പാത്രത്തിൽ ഒഴിക്കൂ',
+    salt:   'ഇനി അല്പം ഉപ്പ് ചേർക്കൂ',
+    pepper: 'അവസാനം കുരുമുളക് ചേർക്കൂ',
+    cooking:'മുട്ട വേവുകയാണ്... സൂക്ഷിക്കൂ! 👀'
+  };
+
+  function setToast(text){
+    toastEl.textContent = text;
+    toastEl.classList.remove('pulse');
+    void toastEl.offsetWidth;
+    toastEl.classList.add('pulse');
+  }
+
+  function updateCounterStates(){
+    steps.forEach((s, i) => {
+      const el = document.getElementById('item-' + s);
+      el.classList.remove('active-target','disabled','used');
+      if (i < stepIndex) el.classList.add('used');
+      else if (i === stepIndex) el.classList.add('active-target');
+      else el.classList.add('disabled');
+    });
+  }
+
+  function shakeItem(el){
+    el.classList.remove('shake');
+    void el.offsetWidth;
+    el.classList.add('shake');
+  }
+
+  // ---- individual step actions ----
+  function doPan(){
+    document.getElementById('flame').classList.add('on');
+    setToast(messages.oil);
+  }
+
+  function doOil(){
+    const fill = document.getElementById('fillOil');
+    fill.style.width = '86%';
+    fill.style.height = '70%';
+    setToast(messages.egg);
+  }
+
+  function doEgg(){
+    const fillEgg = document.getElementById('fillEgg');
+    const yolk = document.getElementById('yolk');
+    fillEgg.style.width = '80%';
+    fillEgg.style.height = '64%';
+    setTimeout(() => {
+      yolk.style.width = '26%';
+      yolk.style.height = '26%';
+    }, 250);
+    setToast(messages.salt);
+  }
+
+  function spawnSpecks(kind, count){
+    const wrap = document.getElementById('specks');
+    for(let i=0;i<count;i++){
+      const s = document.createElement('div');
+      s.className = 'speck ' + kind;
+      const angle = Math.random()*Math.PI*2;
+      const r = 18 + Math.random()*40;
+      const x = 50 + Math.cos(angle)*r*0.5;
+      const y = 46 + Math.sin(angle)*r*0.35;
+      s.style.left = x + '%';
+      s.style.top = y + '%';
+      wrap.appendChild(s);
+    }
+  }
+
+  function doSalt(){
+    spawnSpecks('salt', 14);
+    setToast(messages.pepper);
+  }
+
+  function doPepper(){
+    spawnSpecks('pepper', 14);
+    setToast(messages.cooking);
+  }
+
+  const stepActions = { pan:doPan, oil:doOil, egg:doEgg, salt:doSalt, pepper:doPepper };
+
+  function handleItemClick(name){
+    ensureAudioCtx();
+    const el = document.getElementById('item-' + name);
+    if (cookingStarted) return;
+    if (steps[stepIndex] !== name){
+      shakeItem(el);
+      return;
+    }
+    stepActions[name]();
+    stepIndex++;
+    updateCounterStates();
+    if (stepIndex === steps.length){
+      startCooking();
+    }
+  }
+
+  steps.forEach(name => {
+    document.getElementById('item-' + name).addEventListener('click', () => handleItemClick(name));
+  });
+
+  // ---- cooking phase ----
+  function startCooking(){
+    cookingStarted = true;
+    document.getElementById('steam').classList.add('on');
+    const progressWrap = document.getElementById('progressWrap');
+    const progressBar = document.getElementById('progressBar');
+    progressWrap.classList.add('on');
+
+    const fillEgg = document.getElementById('fillEgg');
+    const yolk = document.getElementById('yolk');
+
+    const duration = 4200;
+    progressBar.style.transition = 'width ' + duration + 'ms linear';
+    requestAnimationFrame(() => { progressBar.style.width = '100%'; });
+
+    // egg visually firms up / turns opaque as it "cooks"
+    setTimeout(() => {
+      fillEgg.style.background = 'radial-gradient(circle at 40% 35%, #ffffff 0%, #fff8e6 60%, #f3e7c4 100%)';
+      yolk.style.width = '24%';
+      yolk.style.height = '22%';
+      yolk.style.top = '44%';
+    }, duration * 0.55);
+
+    setTimeout(() => {
+      triggerCrow();
+    }, duration);
+  }
+
+  // ---- crow snatch sequence ----
+  function triggerCrow(){
+    const pan = document.getElementById('pan');
+    const panRect = pan.getBoundingClientRect();
+    const crow = document.getElementById('crow');
+    const carriedPan = document.getElementById('carriedPan');
+
+    const crowW = crow.getBoundingClientRect().width || 150;
+    const targetX = panRect.left + panRect.width/2 - crowW/2;
+    const targetY = panRect.top + panRect.height/2 - crowW/2;
+
+    const startX = -crowW;
+    const startY = -crowW * 0.6;
+    const endX = window.innerWidth + crowW;
+    const endY = -crowW * 0.4;
+
+    crow.style.transition = 'none';
+    crow.style.transform = `translate(${startX}px, ${startY}px) scaleX(1)`;
+    crow.getBoundingClientRect(); // force reflow
+
+    // Phase 1: swoop in toward the pan
+    crow.style.transition = 'transform 850ms cubic-bezier(.45,.05,.55,.95)';
+    requestAnimationFrame(() => {
+      crow.style.transform = `translate(${targetX}px, ${targetY}px) scaleX(1)`;
+    });
+
+    setTimeout(() => {
+      document.getElementById('flame').classList.remove('on');
+      document.getElementById('steam').classList.remove('on');
+      pan.classList.add('hidden');
+      carriedPan.style.opacity = '1';
+      playCrowCall();
+      setToast('കാ കാ! 🐦‍⬛');
+
+      // Phase 2: fly off with the pan
+      crow.style.transition = 'transform 1300ms cubic-bezier(.3,.2,.6,1)';
+      requestAnimationFrame(() => {
+        crow.style.transform = `translate(${endX}px, ${endY - 40}px) scaleX(1)`;
+      });
+
+      setTimeout(showEnding, 1450);
+    }, 900);
+  }
+
+  function showEnding(){
+    document.getElementById('overlay').classList.add('show');
+  }
+
+  document.getElementById('restartBtn').addEventListener('click', () => {
+    window.location.reload();
+  });
+})();
+</script>
+</body>
+</html>
