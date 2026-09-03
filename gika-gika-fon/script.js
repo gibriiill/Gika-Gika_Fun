@@ -4,7 +4,7 @@
   var HEADS = ["head1.png", "head2.png"];
   var HULLS = ["#8c3b3b", "#1f4e49", "#a97c39"];
  
-  // Destination name shown on each boat's banner — keep in sync with boat1.html … boat14.html
+  // Destination name shown on each boat's banner — keep in sync with boat1.html … boat11.html
   var DESTINATIONS = [
     "കാക്ക കുളിച്ചാൽ കൊക്കാവില്ല",
     "എല്ലാത്തിനും അതിന്റേതായ സമയം ഉണ്ട് ദാസാ!",
@@ -14,12 +14,9 @@
     "അധികം ആയാൽ അമൃതും വിഷം",
     "ഇത്തിരി നേരം ഇരുന്നാൽ എന്താ, മല ഇടിഞ്ഞു വീഴുമോ?",
     "മത്തൻ കുത്തിയാൽ കുമ്പളം മുളകില്ല",
-    "Last Light Landing",
-    "Whispering Shoal",
-    "Moonlit Cove",
-    "Anchor's Rest",
-    "Salt & Driftwood",
-    "Horizon's Edge"
+    "പൂച്ചയ്ക്ക് പൊന്നുരുക്കി കൊടുത്താലും അത് മീൻ തന്നെ നോക്കും",
+    "അടിച്ചാൽ ആനയും വീഴും",
+    "അടുപ്പത് വെച്ചത് കാക്ക കൊണ്ടുപോയി"
   ];
  
   var BOATS = DESTINATIONS.length;
