@@ -1,20 +1,389 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="ml">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Boat 7 — Tideglass Cove</title>
-<meta name="description" content="Sea glass collects in the shallows, catching the last light of the day.">
-<link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ഇത്തിരി നേരം ഇരുന്നാൽ എന്താ, മല ഇടിഞ്ഞു വീഴുമോ?</title>
+<meta name="description" content="ഇത്തിരി നേരം ഇരുന്നാൽ എന്താ, മല ഇടിഞ്ഞു വീഴുമോ? — ഇരുന്നു നോക്കൂ, കാണിച്ചു തരാം.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Malayalam:wght@400;500;600;700&family=Baloo+2:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --sky-top:#241a3d;
+    --sky-mid:#a8456b;
+    --sky-low:#ff9e5e;
+    --sky-horizon:#ffcf8a;
+    --mtn-far:#5c4a72;
+    --mtn-mid:#453860;
+    --mtn-near:#372c50;
+    --rock-a:#4a3b63;
+    --rock-b:#5b4a75;
+    --rock-c:#382b52;
+    --ground:#2e2a3a;
+    --ground-hi:#443a52;
+    --wood:#8a5a34;
+    --wood-dark:#6b4324;
+    --cream:#fff3e2;
+    --cream-dim:#f0dcc4;
+    --ink:#241a3d;
+    --accent:#ffb15e;
+  }
+  *{box-sizing:border-box;}
+  html,body{
+    margin:0;padding:0;
+    width:100%;height:100%;
+    overflow:hidden;
+    background:var(--sky-top);
+    font-family:'Noto Sans Malayalam','Baloo 2',sans-serif;
+  }
+  #stage{
+    position:relative;
+    width:100vw;height:100vh;
+    min-height:560px;
+  }
+  svg#scene{
+    position:absolute;inset:0;
+    width:100%;height:100%;
+    display:block;
+  }
+
+  .title-wrap{
+    position:absolute;
+    top:clamp(20px,5vh,56px);
+    left:0;right:0;
+    text-align:center;
+    padding:0 20px;
+    pointer-events:none;
+    z-index:5;
+  }
+  h1{
+    margin:0;
+    font-weight:700;
+    font-size:clamp(1.15rem,3.4vw,2.15rem);
+    line-height:1.35;
+    color:var(--cream);
+    text-shadow:0 2px 18px rgba(0,0,0,.45);
+    max-width:18ch;
+    margin:0 auto;
+  }
+  .sub{
+    margin-top:10px;
+    font-family:'Baloo 2',sans-serif;
+    font-weight:500;
+    font-size:clamp(.85rem,1.6vw,1.05rem);
+    color:var(--cream-dim);
+    opacity:.85;
+    letter-spacing:.01em;
+  }
+
+  .hint{
+    position:absolute;
+    left:50%;
+    transform:translateX(-50%);
+    bottom:clamp(90px,16vh,150px);
+    z-index:5;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:6px;
+    pointer-events:none;
+    transition:opacity .5s ease;
+  }
+  .hint span{
+    font-family:'Baloo 2',sans-serif;
+    font-size:clamp(.85rem,1.7vw,1rem);
+    color:var(--cream);
+    background:rgba(36,26,61,.55);
+    padding:6px 14px;
+    border-radius:999px;
+    backdrop-filter:blur(2px);
+  }
+  .hint .arrow{
+    width:14px;height:14px;
+    border-right:3px solid var(--cream);
+    border-bottom:3px solid var(--cream);
+    transform:rotate(45deg);
+    animation:bob 1.4s ease-in-out infinite;
+    opacity:.9;
+  }
+  @keyframes bob{
+    0%,100%{transform:rotate(45deg) translateY(0);}
+    50%{transform:rotate(45deg) translateY(6px);}
+  }
+
+  #chairHit{cursor:pointer;}
+  #chairHit:focus-visible{outline:3px solid var(--accent);outline-offset:6px;}
+
+  .rock{
+    transition:transform 1.15s cubic-bezier(.55,0,.2,1);
+    transform:translate(0,0) rotate(0deg);
+  }
+  .stage.collapse .rock{
+    transform:translate(var(--dx),var(--dy)) rotate(var(--rot));
+  }
+
+  .dust{
+    opacity:0;
+    transform-origin:center;
+  }
+  .stage.collapse .dust{
+    animation:puff 1.3s ease-out forwards;
+  }
+  @keyframes puff{
+    0%{opacity:0;transform:scale(.4) translateY(0);}
+    35%{opacity:.55;}
+    100%{opacity:0;transform:scale(1.6) translateY(-30px);}
+  }
+
+  #person{
+    opacity:0;
+    transform:translateY(14px) scale(.9);
+    transform-origin:280px 560px;
+    transition:opacity .55s ease, transform .55s cubic-bezier(.34,1.56,.64,1);
+  }
+  .stage.sitting #person,
+  .stage.collapse #person,
+  .stage.settled #person{
+    opacity:1;
+    transform:translateY(0) scale(1);
+  }
+  #person.breathe{
+    animation:breathe 2.6s ease-in-out infinite;
+  }
+  @keyframes breathe{
+    0%,100%{transform:translateY(0) scale(1);}
+    50%{transform:translateY(-3px) scale(1);}
+  }
+
+  #camera{transition:transform .12s;}
+  .stage.shake #camera{
+    animation:shake .55s cubic-bezier(.36,.07,.19,.97);
+  }
+  @keyframes shake{
+    0%,100%{transform:translate(0,0);}
+    15%{transform:translate(-6px,3px);}
+    30%{transform:translate(5px,-4px);}
+    45%{transform:translate(-4px,4px);}
+    60%{transform:translate(6px,2px);}
+    75%{transform:translate(-3px,-3px);}
+    90%{transform:translate(2px,3px);}
+  }
+
+  .caption{
+    position:absolute;
+    left:50%;
+    bottom:clamp(60px,14vh,120px);
+    transform:translate(-50%,10px);
+    z-index:6;
+    text-align:center;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .5s ease, transform .5s ease;
+    width:min(88vw,520px);
+  }
+  .stage.settled .caption{
+    opacity:1;
+    transform:translate(-50%,0);
+    pointer-events:auto;
+  }
+  .caption p{
+    margin:0 0 6px;
+    font-weight:600;
+    font-size:clamp(1.05rem,2.6vw,1.5rem);
+    color:var(--cream);
+    text-shadow:0 2px 14px rgba(0,0,0,.5);
+  }
+  .caption p.small{
+    font-weight:500;
+    font-size:clamp(.85rem,1.8vw,1.02rem);
+    color:var(--cream-dim);
+  }
+  button#again{
+    margin-top:16px;
+    font-family:'Baloo 2',sans-serif;
+    font-weight:600;
+    font-size:clamp(.9rem,1.9vw,1.05rem);
+    color:var(--ink);
+    background:var(--accent);
+    border:none;
+    padding:11px 26px;
+    border-radius:999px;
+    cursor:pointer;
+    box-shadow:0 6px 20px rgba(0,0,0,.3);
+    transition:transform .15s ease, box-shadow .15s ease;
+  }
+  button#again:hover{transform:translateY(-2px);box-shadow:0 9px 24px rgba(0,0,0,.35);}
+  button#again:active{transform:translateY(0);}
+  button#again:focus-visible{outline:3px solid var(--cream);outline-offset:3px;}
+
+  @media (prefers-reduced-motion: reduce){
+    .rock,#person,.hint .arrow,.caption,#camera{transition:none !important;animation:none !important;}
+    .stage.collapse .rock{transform:translate(var(--dx),var(--dy)) rotate(var(--rot));}
+    .stage.settled .caption{opacity:1;transform:translate(-50%,0);}
+  }
+</style>
 </head>
-<body class="page-boat" style="background: linear-gradient(160deg, #a97c39 0%, #5c4420 100%);">
+<body>
+<div id="stage" class="stage idle">
+  <div class="title-wrap">
+    <h1>ഇത്തിരി നേരം ഇരുന്നാൽ എന്താ, മല ഇടിഞ്ഞു വീഴുമോ?</h1>
+    <div class="sub">ഒന്ന് ഇരുന്നു നോക്കൂ...</div>
+  </div>
 
-<section class="boat-hero">
-  <img class="big-head" src="head2.png" alt="Rower of boat 7">
-  <h1>Boat 7: Tideglass Cove</h1>
-  <p>Sea glass collects in the shallows, catching the last light of the day.</p>
-  <a class="back-link" href="index.html">&larr; Back to the harbor</a>
-</section>
+  <div class="hint" id="hint">
+    <span>കസേരയിൽ ഞെക്കൂ</span>
+    <div class="arrow"></div>
+  </div>
 
+  <svg id="scene" viewBox="0 0 1200 700" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="var(--sky-top)"/>
+        <stop offset="45%" stop-color="var(--sky-mid)"/>
+        <stop offset="75%" stop-color="var(--sky-low)"/>
+        <stop offset="100%" stop-color="var(--sky-horizon)"/>
+      </linearGradient>
+      <radialGradient id="sunGlow" cx="50%" cy="50%" r="50%">
+        <stop offset="0%" stop-color="#ffe3ad" stop-opacity="0.9"/>
+        <stop offset="100%" stop-color="#ffe3ad" stop-opacity="0"/>
+      </radialGradient>
+      <linearGradient id="groundGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="var(--ground-hi)"/>
+        <stop offset="100%" stop-color="var(--ground)"/>
+      </linearGradient>
+    </defs>
+
+    <rect x="0" y="0" width="1200" height="700" fill="url(#skyGrad)"/>
+    <circle cx="930" cy="190" r="150" fill="url(#sunGlow)"/>
+    <circle cx="930" cy="190" r="46" fill="#ffe9c2" opacity="0.9"/>
+
+    <g id="camera">
+      <!-- far mountains, static backdrop -->
+      <path d="M0,430 L120,330 L230,410 L340,300 L470,420 L600,340 L720,430 L860,320 L1000,420 L1120,350 L1200,430 L1200,700 L0,700 Z" fill="var(--mtn-far)" opacity="0.55"/>
+      <path d="M0,470 L150,380 L280,460 L420,360 L560,470 L720,390 L880,470 L1040,380 L1200,470 L1200,700 L0,700 Z" fill="var(--mtn-mid)" opacity="0.75"/>
+
+      <!-- collapsing mountain mass, sits behind the chair -->
+      <g id="rockMass">
+        <path class="rock" style="--dx:-38px;--dy:250px;--rot:-14deg;" d="M330,560 L470,220 L560,560 Z" fill="var(--rock-a)"/>
+        <path class="rock" style="--dx:52px;--dy:235px;--rot:11deg;" d="M560,560 L470,220 L640,300 L700,560 Z" fill="var(--rock-b)"/>
+        <path class="rock" style="--dx:-60px;--dy:210px;--rot:-9deg;" d="M330,560 L470,220 L400,340 L280,560 Z" fill="var(--rock-c)"/>
+        <path class="rock" style="--dx:70px;--dy:200px;--rot:16deg;" d="M700,560 L640,300 L780,380 L820,560 Z" fill="var(--rock-a)"/>
+        <path class="rock" style="--dx:-22px;--dy:270px;--rot:-6deg;" d="M400,560 L470,340 L540,560 Z" fill="var(--rock-b)"/>
+        <path class="rock" style="--dx:20px;--dy:255px;--rot:8deg;" d="M540,560 L470,340 L610,420 L640,560 Z" fill="var(--rock-c)"/>
+        <path class="rock" style="--dx:-85px;--dy:180px;--rot:-18deg;" d="M280,560 L400,340 L340,420 L230,560 Z" fill="var(--rock-b)"/>
+        <path class="rock" style="--dx:90px;--dy:175px;--rot:20deg;" d="M820,560 L780,380 L860,440 L900,560 Z" fill="var(--rock-c)"/>
+      </g>
+
+      <!-- dust puffs, hidden until collapse -->
+      <g id="dustGroup">
+        <circle class="dust" cx="420" cy="540" r="46" fill="#cbb9d8"/>
+        <circle class="dust" cx="520" cy="520" r="60" fill="#d8c8bd"/>
+        <circle class="dust" cx="600" cy="545" r="40" fill="#c9b6cf"/>
+        <circle class="dust" cx="470" cy="500" r="34" fill="#e0d2c3"/>
+        <circle class="dust" cx="650" cy="510" r="50" fill="#cdbccf"/>
+      </g>
+
+      <!-- ground -->
+      <path d="M0,555 Q600,520 1200,555 L1200,700 L0,700 Z" fill="url(#groundGrad)"/>
+
+      <!-- chair (front view), sitting figure appears behind the seat back, in front of the seat -->
+      <g id="chairHit" role="button" tabindex="0" aria-label="കസേരയിൽ ഇരിക്കാൻ ഞെക്കുക">
+        <!-- back legs -->
+        <rect x="245" y="600" width="12" height="70" rx="3" fill="var(--wood-dark)"/>
+        <rect x="313" y="600" width="12" height="70" rx="3" fill="var(--wood-dark)"/>
+
+        <!-- person sits between seat and backrest -->
+        <g id="person">
+          <ellipse cx="280" cy="590" rx="34" ry="10" fill="#000" opacity="0.18"/>
+          <path d="M254,585 Q254,540 280,540 Q306,540 306,585 L306,600 L254,600 Z" fill="#ffb15e"/>
+          <circle cx="280" cy="512" r="24" fill="#ffd9a0"/>
+          <path d="M256,505 Q280,478 304,505 Q304,486 280,484 Q256,486 256,505 Z" fill="#3a2e50"/>
+          <path d="M254,565 Q234,585 240,610" stroke="#ffd9a0" stroke-width="12" stroke-linecap="round" fill="none"/>
+          <path d="M306,565 Q326,585 320,610" stroke="#ffd9a0" stroke-width="12" stroke-linecap="round" fill="none"/>
+          <path d="M262,596 Q262,560 300,558" stroke="#ffb15e" stroke-width="16" stroke-linecap="round" fill="none" opacity="0"/>
+        </g>
+
+        <!-- seat -->
+        <rect x="235" y="596" width="90" height="16" rx="4" fill="var(--wood)"/>
+        <!-- backrest -->
+        <rect x="235" y="500" width="90" height="14" rx="4" fill="var(--wood)"/>
+        <rect x="248" y="514" width="14" height="82" fill="var(--wood-dark)"/>
+        <rect x="273" y="514" width="14" height="82" fill="var(--wood-dark)"/>
+        <rect x="298" y="514" width="14" height="82" fill="var(--wood-dark)"/>
+        <!-- front legs -->
+        <rect x="238" y="608" width="13" height="66" rx="3" fill="var(--wood)"/>
+        <rect x="309" y="608" width="13" height="66" rx="3" fill="var(--wood)"/>
+        <!-- invisible larger hit area -->
+        <rect x="205" y="470" width="150" height="230" fill="transparent"/>
+      </g>
+    </g>
+  </svg>
+
+  <div class="caption">
+    <p>പറഞ്ഞില്ലേ ഞാൻ!</p>
+    <p class="small">ഇത്തിരി നേരം ഇരുന്നാൽ, മല ശരിക്കും ഇടിഞ്ഞു വീഴും.</p>
+    <button id="again">വീണ്ടും ഇരിക്കാം</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  const stage = document.getElementById('stage');
+  const chair = document.getElementById('chairHit');
+  const hint = document.getElementById('hint');
+  const person = document.getElementById('person');
+  const again = document.getElementById('again');
+  let busy = false;
+  let timers = [];
+
+  function clearTimers(){
+    timers.forEach(t => clearTimeout(t));
+    timers = [];
+  }
+
+  function sit(){
+    if(busy || !stage.classList.contains('idle')) return;
+    busy = true;
+    stage.classList.remove('idle');
+    stage.classList.add('sitting');
+    hint.style.opacity = '0';
+    chair.setAttribute('aria-disabled','true');
+
+    timers.push(setTimeout(() => {
+      person.classList.add('breathe');
+    }, 600));
+
+    timers.push(setTimeout(() => {
+      person.classList.remove('breathe');
+      stage.classList.add('shake');
+      stage.classList.add('collapse');
+    }, 3300));
+
+    timers.push(setTimeout(() => {
+      stage.classList.add('settled');
+      busy = false;
+    }, 4700));
+  }
+
+  function reset(){
+    clearTimers();
+    stage.className = 'stage idle';
+    person.classList.remove('breathe');
+    hint.style.opacity = '1';
+    chair.removeAttribute('aria-disabled');
+    busy = false;
+  }
+
+  chair.addEventListener('click', sit);
+  chair.addEventListener('keydown', (e) => {
+    if(e.key === 'Enter' || e.key === ' '){
+      e.preventDefault();
+      sit();
+    }
+  });
+  again.addEventListener('click', reset);
+})();
+</script>
 </body>
 </html>
