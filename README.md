@@ -130,8 +130,8 @@ The video demonstrates the basic layout and working of the project.
 - Boat 11 — അടുപ്പത്ത് വെച്ചത് കാക്ക കൊണ്ടുപോയി: cook an egg step by step on the stove, only for a crow to swoop in and steal the pan.
 
 ## Team Contributions
-- Hadhi Gibril: [Specific contributions]
-- Kashinadhan V H: [Specific contributions]
+- Hadhi Gibril: idea and devoloping.
+- Kashinadhan V H: idea and devoloping.
 
 ---
 Made with ❤️ at TinkerHub Useless Projects
