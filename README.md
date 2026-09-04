@@ -58,6 +58,13 @@ Or simply open `index.html` directly in a browser.
 For Software:
 
 # Screenshots (Add at least 3)
+
+<img width="842" height="578" alt="logo" src="https://github.com/user-attachments/assets/467ff77b-8696-4a81-83e3-d2fad126c212" />
+Let the fun begin
+
+<img width="1400" height="887" alt="boat" src="https://github.com/user-attachments/assets/9645d3a5-b85e-4a03-b06c-ca4a0768b374" />
+Choose your boat wisely.
+
 <img width="1862" height="887" alt="boat1" src="https://github.com/user-attachments/assets/513ead1f-ca2e-4c65-bf41-b7f11b27eb7c" />
 Bringing the proverb കാക്ക കുളിച്ചാൽ കൊക്കാവില്ല to life.
 
@@ -72,6 +79,21 @@ Scrap and see the secrets.
 
 <img width="1767" height="777" alt="boat5" src="https://github.com/user-attachments/assets/3d8dac6b-cb81-4662-96b9-829f2a6a6ed8" />
 Crack the pot :)
+
+<img width="1501" height="897" alt="boat6" src="https://github.com/user-attachments/assets/37b1d6c3-984a-4368-85c1-4931e0939c05" />
+Can you drink wisely.
+
+<img width="1662" height="877" alt="boat7" src="https://github.com/user-attachments/assets/e675d9bb-c01c-42e2-a4a3-81af6e5f104d" />
+We all need some rest.
+
+<img width="1627" height="852" alt="boat8" src="https://github.com/user-attachments/assets/c95053c1-799b-42ce-8d79-a94993ec16f2" />
+Farming is Aura
+
+<img width="1153" height="887" alt="boat9" src="https://github.com/user-attachments/assets/f26bd140-b355-4034-aac8-dc86a3d8b712" />
+Whose a good kitty
+
+<img width="1802" height="898" alt="boat11" src="https://github.com/user-attachments/assets/82850109-acc5-4a26-93fd-08816f606731" />
+Protien is for life.
 
 
 
