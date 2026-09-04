@@ -60,8 +60,8 @@ For Software:
 # Screenshots (Add at least 3)
 <img width="1862" height="887" alt="boat1" src="https://github.com/user-attachments/assets/513ead1f-ca2e-4c65-bf41-b7f11b27eb7c" />
 Bringing the proverb കാക്ക കുളിച്ചാൽ കൊക്കാവില്ല to life.
-![Screenshot2](Add screenshot 2 here with proper name)
-*Add caption explaining what this shows*
+<img width="711" height="892" alt="boat2" src="https://github.com/user-attachments/assets/ab82fc6b-7373-4eb9-b2fc-d0b3423a98bb" />
+എല്ലാത്തിനും അതിന്റേതായ സമയം ഉണ്ട് ദാസാ!
 
 ![Screenshot3](Add screenshot 3 here with proper name)
 *Add caption explaining what this shows*
