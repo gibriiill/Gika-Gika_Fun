@@ -112,8 +112,8 @@ Not applicable — no physical build for this project.
 
 ### Project Demo
 # Video
-https://drive.google.com/file/d/1DkkqB8qm4VVsVYsmpmkYzjJN9lKlkShQ/view?usp=drive_link
-The video demonstrates the basic layout and working of some prospects of the project.
+https://drive.google.com/file/d/1yZE1EDl1wq8deyDwP8-WZeCQfkb_IVUk/view?usp=sharing
+The video demonstrates the basic layout and working of the project.
 
 # Additional Demos
 - The Harbor (`index.html`): nine animated rowboats sail across the screen; each carries a stickman rower and a banner naming its proverb, and links to its own page.
