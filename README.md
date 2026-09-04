@@ -70,6 +70,12 @@ Guess the കാക്ക കുഞ്ഞു
 <img width="1566" height="867" alt="boat4" src="https://github.com/user-attachments/assets/ee3a7f65-c2fa-4ec7-a6d5-ccea355b05e2" />
 Scrap and see the secrets.
 
+<img width="1767" height="777" alt="boat5" src="https://github.com/user-attachments/assets/3d8dac6b-cb81-4662-96b9-829f2a6a6ed8" />
+Crack the pot :)
+
+
+
+
 # Diagrams
 ![Workflow](Add your workflow/architecture diagram here)
 *The homepage (`index.html`) renders a harbor of boats via `script.js`, each pointing to a standalone `boatN.html` page that implements one proverb as a self-contained interactive experience (SVG/Canvas animation + vanilla JS), styled with `style.css` and page-specific inline styles.*
