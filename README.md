@@ -58,9 +58,8 @@ Or simply open `index.html` directly in a browser.
 For Software:
 
 # Screenshots (Add at least 3)
-![Screenshot1](Add screenshot 1 here with proper name)
-*Add caption explaining what this shows*
-
+<img width="1862" height="887" alt="boat1" src="https://github.com/user-attachments/assets/513ead1f-ca2e-4c65-bf41-b7f11b27eb7c" />
+Bringing the proverb കാക്ക കുളിച്ചാൽ കൊക്കാവില്ല to life.
 ![Screenshot2](Add screenshot 2 here with proper name)
 *Add caption explaining what this shows*
 
