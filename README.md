@@ -81,7 +81,7 @@ Not applicable — no physical build for this project.
 
 ### Project Demo
 # Video
-[Add your demo video link here]
+https://drive.google.com/file/d/1DkkqB8qm4VVsVYsmpmkYzjJN9lKlkShQ/view?usp=drive_link
 *Explain what the video demonstrates*
 
 # Additional Demos
